@@ -12,6 +12,7 @@ public class BigInteger
     // implement this
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("");
 
+    boolean sign = false;
     byte[] data = new byte[200];
     
   
@@ -26,6 +27,24 @@ public class BigInteger
 //  
    public BigInteger(String s)
    {
+       boolean isSignExplicit = false;
+       if(s.charAt(0) == '+' || s.charAt(0) == '-')
+       {
+            isSignExplicit = true;
+            if (s.charAt(0) == '-') 
+            {
+                sign = true;
+            }
+            else 
+            {
+                sign = false;
+            }
+       }
+
+       for(int i = isSignExplicit ? 1 : 0; i < s.length(); i++)
+       {
+           data[i] = s.charAt(i) - '0';
+       }
    }
  
    public BigInteger add(BigInteger big)
@@ -43,6 +62,25 @@ public class BigInteger
    @Override
    public String toString()
    {
+       StringBuilder sb = new StringBuilder();
+
+       sb.append(sign ? "-" : "");
+
+       boolean notHeadFlag = false;
+       for(byte b : data)
+       {
+           if(notHeadFlag && b == 0)
+           {
+               continue;
+           }
+           else
+           {
+               notHeadFlag = false;
+               sb.append((char)(b + '0'));
+           }
+       }
+
+       return sb.toString();
    }
   
     static BigInteger evaluate(String input) throws IllegalArgumentException
