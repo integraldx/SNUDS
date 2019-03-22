@@ -14,22 +14,12 @@ public class BigInteger
 
     boolean sign = false;
     byte[] data = new byte[200];
-    
-  
-  
-//    public BigInteger(int i)
-//    {
-//    }
-//  
-//    public BigInteger(int[] num1)
-//    {
-//    }
-//  
-   public BigInteger(String s)
-   {
-       boolean isSignExplicit = false;
-       if(s.charAt(0) == '+' || s.charAt(0) == '-')
-       {
+     
+    public BigInteger(String s)
+    {
+        boolean isSignExplicit = false;
+        if(s.charAt(0) == '+' || s.charAt(0) == '-')
+        {
             isSignExplicit = true;
             if (s.charAt(0) == '-') 
             {
@@ -39,49 +29,150 @@ public class BigInteger
             {
                 sign = false;
             }
-       }
+        }
 
-       for(int i = isSignExplicit ? 1 : 0; i < s.length(); i++)
-       {
-           data[i] = s.charAt(i) - '0';
-       }
-   }
+        for(int i = s.length() - 1; i >= (isSignExplicit ? 1 : 0); i--)
+        {
+            data[s.length() - 1 - i] = (byte)(s.charAt(i) - '0');
+        }
+    }
  
-   public BigInteger add(BigInteger big)
-   {
-   }
- 
-   public BigInteger subtract(BigInteger big)
-   {
-   }
- 
-   public BigInteger multiply(BigInteger big)
-   {
-   }
- 
-   @Override
-   public String toString()
-   {
-       StringBuilder sb = new StringBuilder();
+    public BigInteger add(BigInteger big)
+    {
+        BigInteger result = new BigInteger("0");
+        if(this.sign != big.sign)
+        {
+            for(int i = data.length - 1; i >= 0; i--)
+            {
+                if(this.data[i] == big.data[i])
+                {
+                    continue;
+                }
+                else if(this.data[i] > big.data[i])
+                {
+                    result.sign = this.sign;
+                }
+                else
+                {
+                    result.sign = big.sign;
+                }
+            }
 
-       sb.append(sign ? "-" : "");
+            boolean carry = false;
 
-       boolean notHeadFlag = false;
-       for(byte b : data)
-       {
-           if(notHeadFlag && b == 0)
-           {
-               continue;
-           }
-           else
-           {
-               notHeadFlag = false;
-               sb.append((char)(b + '0'));
-           }
-       }
+            if(result.sign == this.sign)
+            {
+                for(int i = 0; i < data.length; i++)
+                {
+                    byte tempResult = (byte)(this.data[i] - big.data[i]);
+                    if(carry)
+                    {
+                        tempResult--;
+                    }
+                    if(tempResult < 0)
+                    {
+                        carry = true;
+                        tempResult += 10;
+                    }
+                    else
+                    {
+                        carry = false;
+                    }
+                    result.data[i] = tempResult;
+                }
+            }
+            else
+            {
+                for(int i = 0; i < data.length; i++)
+                {
+                    byte tempResult = (byte)(big.data[i] - this.data[i]);
+                    if(carry)
+                    {
+                        tempResult--;
+                    }
 
-       return sb.toString();
-   }
+                    if(tempResult < 0)
+                    {
+                        carry = true;
+                        tempResult += 10;
+                    }
+                    else
+                    {
+                        carry = false;
+                    }
+                    result.data[i] = tempResult;
+                }
+            }
+        }
+        else
+        {
+            if(this.sign && big.sign)
+            {
+                result.sign = true;
+            }
+            else if (!this.sign && !big.sign)
+            {
+                result.sign = false;
+            }
+
+            boolean carry = false;
+            for(int i = 0; i < data.length; i++)
+            {
+                byte tempResult = (byte)(this.data[i] + big.data[i]);
+                if(tempResult / 10 != 0)
+                {
+                    carry = true;
+                }
+                else{
+                    carry = false;
+                }
+                result.data[i] = (byte)(tempResult % 10 + (carry ? 1 : 0));
+            }
+        }
+
+        return result;
+    }
+ 
+    public BigInteger subtract(BigInteger big)
+    {
+        big.sign = !big.sign;
+        return add(big);
+    }
+ 
+//    public BigInteger multiply(BigInteger big)
+//    {
+//    }
+ 
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(sign ? "-" : "");
+
+        boolean notHeadFlag = true;
+        for(int i = 0; i < data.length; i++)
+        {
+            byte b = data[data.length - 1 - i];
+
+            if(notHeadFlag && (b == 0) && i != data.length - 1)
+            {
+                continue;
+            }
+            else
+            {
+                notHeadFlag = false;
+                sb.append((char)(b + '0'));
+            }
+        }
+
+        if(sb.length() == 2 && sb.charAt(1) == 0 && sb.charAt(0) == '-')
+        {
+            sb.deleteCharAt(0);
+        }
+
+        return sb.toString();
+    }
   
     static BigInteger evaluate(String input) throws IllegalArgumentException
     {
@@ -129,11 +220,14 @@ public class BigInteger
         String int1 = input.substring(0, operatorIndex);
         char operator = input.charAt(operatorIndex);
         String int2 = input.substring(operatorIndex + 1);
+        BigInteger bint1;
+        BigInteger bint2;
+        BigInteger resultInteger;
 
         try{
-            BigInteger bint1 = new BigInteger(int1);
-            BigInteger bint2 = new BigInteger(int2);
-            BigInteger resultInteger = new BigInteger("0");
+            bint1 = new BigInteger(int1);
+            bint2 = new BigInteger(int2);
+            resultInteger = new BigInteger("0");
         }
         catch (IllegalArgumentException e)
         {
@@ -148,7 +242,7 @@ public class BigInteger
                 resultInteger = bint1.subtract(bint2);
                 break;
             case '*':
-                resultInteger = bint1.multiply(bint2);
+                //resultInteger = bint1.multiply(bint2);
                 break;
         }
 
