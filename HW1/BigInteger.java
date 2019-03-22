@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
   
 ///
 public class BigInteger
@@ -13,7 +14,7 @@ public class BigInteger
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("");
 
     boolean sign = false;
-    byte[] data = new byte[200];
+    int[] data = new int[200];
      
     public BigInteger(String s)
     {
@@ -33,7 +34,7 @@ public class BigInteger
 
         for(int i = s.length() - 1; i >= (isSignExplicit ? 1 : 0); i--)
         {
-            data[s.length() - 1 - i] = (byte)(s.charAt(i) - '0');
+            data[s.length() - 1 - i] = (int)(s.charAt(i) - '0');
         }
     }
  
@@ -51,10 +52,12 @@ public class BigInteger
                 else if(this.data[i] > big.data[i])
                 {
                     result.sign = this.sign;
+                    break;
                 }
                 else
                 {
                     result.sign = big.sign;
+                    break;
                 }
             }
 
@@ -64,7 +67,7 @@ public class BigInteger
             {
                 for(int i = 0; i < data.length; i++)
                 {
-                    byte tempResult = (byte)(this.data[i] - big.data[i]);
+                    int tempResult = (int)(this.data[i] - big.data[i]);
                     if(carry)
                     {
                         tempResult--;
@@ -85,7 +88,7 @@ public class BigInteger
             {
                 for(int i = 0; i < data.length; i++)
                 {
-                    byte tempResult = (byte)(big.data[i] - this.data[i]);
+                    int tempResult = (int)(big.data[i] - this.data[i]);
                     if(carry)
                     {
                         tempResult--;
@@ -118,7 +121,7 @@ public class BigInteger
             boolean carry = false;
             for(int i = 0; i < data.length; i++)
             {
-                byte tempResult = (byte)(this.data[i] + big.data[i]);
+                int tempResult = (int)(this.data[i] + big.data[i] + (carry ? 1 : 0));
                 if(tempResult / 10 != 0)
                 {
                     carry = true;
@@ -126,7 +129,7 @@ public class BigInteger
                 else{
                     carry = false;
                 }
-                result.data[i] = (byte)(tempResult % 10 + (carry ? 1 : 0));
+                result.data[i] = (int)(tempResult % 10);
             }
         }
 
@@ -139,9 +142,32 @@ public class BigInteger
         return add(big);
     }
  
-//    public BigInteger multiply(BigInteger big)
-//    {
-//    }
+    public BigInteger multiply(BigInteger big)
+    {
+        BigInteger result = new BigInteger("0");
+
+        if(this.sign != big.sign)
+        {
+            result.sign = true;
+        }
+        else
+        {
+            result.sign = false;
+        }
+
+        for(int i = 0; i < data.length; i++)
+        {
+            int carry = 0;
+            for(int j = i; j < data.length; j++)
+            {
+                int tempResult = (int)((this.data[j - i] * big.data[i]) + carry);
+                carry = (int)((tempResult + result.data[j]) / 10);
+                result.data[j] = (int)((tempResult + result.data[j]) % 10);
+            }
+        }
+
+        return result;
+    }
  
     @Override
     public String toString()
@@ -153,7 +179,7 @@ public class BigInteger
         boolean notHeadFlag = true;
         for(int i = 0; i < data.length; i++)
         {
-            byte b = data[data.length - 1 - i];
+            int b = data[data.length - 1 - i];
 
             if(notHeadFlag && (b == 0) && i != data.length - 1)
             {
@@ -166,7 +192,7 @@ public class BigInteger
             }
         }
 
-        if(sb.length() == 2 && sb.charAt(1) == 0 && sb.charAt(0) == '-')
+        if(sb.length() == 2 && sb.charAt(1) == '0' && sb.charAt(0) == '-')
         {
             sb.deleteCharAt(0);
         }
@@ -185,6 +211,8 @@ public class BigInteger
         // BigInteger num2 = new BigInteger(arg2);
         // BigInteger result = num1.add(num2);
         // return result;
+
+        input = input.replace(" ", "");
         int operatorIndex = input.indexOf('+');
         if(operatorIndex == 0)
         {
@@ -242,7 +270,7 @@ public class BigInteger
                 resultInteger = bint1.subtract(bint2);
                 break;
             case '*':
-                //resultInteger = bint1.multiply(bint2);
+                resultInteger = bint1.multiply(bint2);
                 break;
         }
 
