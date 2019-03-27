@@ -9,20 +9,26 @@ public class BigInteger
 {
     public static final String QUIT_COMMAND = "quit";
     public static final String MSG_INVALID_INPUT = "Invalid Input!";
-  
-    // implement this
-    public static final Pattern EXPRESSION_PATTERN = Pattern.compile("");
 
     boolean sign = false;
+
+    /**
+     * Contains absolute numbers. [0] is lowest digit, [199] is highest digit.
+     */
     int[] data = new int[200];
      
-    public BigInteger(String s)
+    /**
+     * Gets string and parse into BigInteger. 
+     * 
+     * @param stringToParse
+     */
+    public BigInteger(String stringToParse)
     {
         boolean isSignExplicit = false;
-        if(s.charAt(0) == '+' || s.charAt(0) == '-')
+        if(stringToParse.charAt(0) == '+' || stringToParse.charAt(0) == '-')
         {
             isSignExplicit = true;
-            if (s.charAt(0) == '-') 
+            if (stringToParse.charAt(0) == '-') 
             {
                 sign = true;
             }
@@ -32,42 +38,54 @@ public class BigInteger
             }
         }
 
-        for(int i = s.length() - 1; i >= (isSignExplicit ? 1 : 0); i--)
+        for(int i = stringToParse.length() - 1; i >= (isSignExplicit ? 1 : 0); i--)
         {
-            data[s.length() - 1 - i] = (int)(s.charAt(i) - '0');
+            data[stringToParse.length() - 1 - i] = (int)(stringToParse.charAt(i) - '0');
         }
     }
  
-    public BigInteger add(BigInteger big)
+    /**
+     * Adds this and another BigInteger and returns new BigInteger
+     * @param rightOperand BigInteger to add
+     * @return new BigInteger
+     */
+    public BigInteger add(BigInteger rightOperand)
     {
+        // initialize result
         BigInteger result = new BigInteger("0");
-        if(this.sign != big.sign)
+
+        // check each sign
+        if(this.sign != rightOperand.sign)
         {
+            // different sign - subtraction
+
+            // evaluate sign
             for(int i = data.length - 1; i >= 0; i--)
             {
-                if(this.data[i] == big.data[i])
+                if(this.data[i] == rightOperand.data[i])
                 {
                     continue;
                 }
-                else if(this.data[i] > big.data[i])
+                else if(this.data[i] > rightOperand.data[i])
                 {
                     result.sign = this.sign;
                     break;
                 }
                 else
                 {
-                    result.sign = big.sign;
+                    result.sign = rightOperand.sign;
                     break;
                 }
             }
 
+            // actual calculation
             boolean carry = false;
-
             if(result.sign == this.sign)
             {
+                // this is absolute big
                 for(int i = 0; i < data.length; i++)
                 {
-                    int tempResult = (int)(this.data[i] - big.data[i]);
+                    int tempResult = (int)(this.data[i] - rightOperand.data[i]);
                     if(carry)
                     {
                         tempResult--;
@@ -86,9 +104,10 @@ public class BigInteger
             }
             else
             {
+                // rightOperand is absolute big
                 for(int i = 0; i < data.length; i++)
                 {
-                    int tempResult = (int)(big.data[i] - this.data[i]);
+                    int tempResult = (int)(rightOperand.data[i] - this.data[i]);
                     if(carry)
                     {
                         tempResult--;
@@ -109,19 +128,23 @@ public class BigInteger
         }
         else
         {
-            if(this.sign && big.sign)
+            // equal sign - addition
+
+            // evaluate sign
+            if(this.sign && rightOperand.sign)
             {
                 result.sign = true;
             }
-            else if (!this.sign && !big.sign)
+            else if (!this.sign && !rightOperand.sign)
             {
                 result.sign = false;
             }
 
+            // actual calculation
             boolean carry = false;
             for(int i = 0; i < data.length; i++)
             {
-                int tempResult = (int)(this.data[i] + big.data[i] + (carry ? 1 : 0));
+                int tempResult = (int)(this.data[i] + rightOperand.data[i] + (carry ? 1 : 0));
                 if(tempResult / 10 != 0)
                 {
                     carry = true;
@@ -136,17 +159,34 @@ public class BigInteger
         return result;
     }
  
-    public BigInteger subtract(BigInteger big)
+    /**
+     * Subtracts big from this. 
+     * Acts as sign-flipped addition.
+     * @param rightOperand BigInteger to subtract
+     * @return new BigInteger
+     */
+    public BigInteger subtract(BigInteger rightOperand)
     {
-        big.sign = !big.sign;
-        return add(big);
+        // sign flip
+        rightOperand.sign = !rightOperand.sign;
+
+        return add(rightOperand);
     }
  
-    public BigInteger multiply(BigInteger big)
+
+    /**
+     * Multiply this and big.
+     * Pretty expensive operation.
+     * @param rightOperand BigInteger to multiply
+     * @return new BigInteger
+     */
+    public BigInteger multiply(BigInteger rightOperand)
     {
+        // initializing result
         BigInteger result = new BigInteger("0");
 
-        if(this.sign != big.sign)
+        // evaluate sign
+        if(this.sign != rightOperand.sign)
         {
             result.sign = true;
         }
@@ -155,12 +195,13 @@ public class BigInteger
             result.sign = false;
         }
 
+        // actual calculation - shift, multiply, add 
         for(int i = 0; i < data.length; i++)
         {
             int carry = 0;
             for(int j = i; j < data.length; j++)
             {
-                int tempResult = (int)((this.data[j - i] * big.data[i]) + carry);
+                int tempResult = (int)((this.data[j - i] * rightOperand.data[i]) + carry);
                 carry = (int)((tempResult + result.data[j]) / 10);
                 result.data[j] = (int)((tempResult + result.data[j]) % 10);
             }
@@ -169,6 +210,7 @@ public class BigInteger
         return result;
     }
  
+
     @Override
     public String toString()
     {
@@ -200,19 +242,19 @@ public class BigInteger
         return sb.toString();
     }
   
+    /**
+     * Gets calculation expression and evaluates into BigInteger.
+     * Whitespace between chars is allowed, explicit sign expression is also allowed.
+     * @param input String expression of calculation.
+     * @return Result BigInteger
+     * @throws IllegalArgumentException
+     */
     static BigInteger evaluate(String input) throws IllegalArgumentException
     {
-        // implement here
-        // parse input
-        // using regex is allowed
-  
-        // One possible implementation
-        // BigInteger num1 = new BigInteger(arg1);
-        // BigInteger num2 = new BigInteger(arg2);
-        // BigInteger result = num1.add(num2);
-        // return result;
-
+        // Filter Whitespace
         input = input.replace(" ", "");
+
+        // Fetch operand
         int operatorIndex = input.indexOf('+');
         if(operatorIndex == 0)
         {
@@ -245,6 +287,7 @@ public class BigInteger
             }
         }
 
+        // initializing for calculation
         String int1 = input.substring(0, operatorIndex);
         char operator = input.charAt(operatorIndex);
         String int2 = input.substring(operatorIndex + 1);
@@ -259,8 +302,11 @@ public class BigInteger
         }
         catch (IllegalArgumentException e)
         {
+            // parse failed
             throw e;
         }
+
+        // calculate
         switch(operator)
         {
             case '+':
