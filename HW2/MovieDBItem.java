@@ -1,3 +1,4 @@
+import javax.lang.model.util.ElementScanner6;
 
 /******************************************************************************
  * MovieDB의 인터페이스에서 공통으로 사용하는 클래스.
@@ -25,8 +26,15 @@ public class MovieDBItem implements Comparable<MovieDBItem> {
 
     @Override
     public int compareTo(MovieDBItem other) {
-        // TODO delete the line below and implement this method
-        throw new UnsupportedOperationException();
+        int temp = this.genre.compareTo(other.genre);
+        if(temp == 0)
+        {
+            return this.title.compareTo(other.title);
+        }
+        else
+        {
+            return temp;
+        }
     }
 
     @Override

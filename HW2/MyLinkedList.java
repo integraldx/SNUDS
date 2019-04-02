@@ -54,6 +54,19 @@ public class MyLinkedList<T> implements ListInterface<T> {
 		numItems += 1;
 	}
 
+	public void insertAt(T item, T toInsert)
+	{
+		Node<T> curr = head;
+		while (curr.getNext() != null)
+		{
+			if(curr.getNext().getItem().equals(toInsert))
+			{
+				curr.insertNext(item);
+				return;
+			}
+		}
+	}
+
 	@Override
 	public void removeAll() {
 		head.setNext(null);

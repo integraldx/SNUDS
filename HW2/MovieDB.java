@@ -1,6 +1,8 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import javax.lang.model.util.ElementScanner6;
+
 /**
  * Genre, Title 을 관리하는 영화 데이터베이스.
  * 
@@ -8,11 +10,10 @@ import java.util.NoSuchElementException;
  * 유지하는 데이터베이스이다. 
  */
 public class MovieDB {
+	MyLinkedList<Genre> genreList;
+
     public MovieDB() {
-        // FIXME implement this
-    	
-    	// HINT: MovieDBGenre 클래스를 정렬된 상태로 유지하기 위한 
-    	// MyLinkedList 타입의 멤버 변수를 초기화 한다.
+		genreList = new MyLinkedList<Genre>();
     }
 
     public void insert(MovieDBItem item) {
@@ -75,58 +76,83 @@ public class MovieDB {
 }
 
 class Genre extends Node<String> implements Comparable<Genre> {
+	MovieList movieList;
 	public Genre(String name) {
 		super(name);
-		throw new UnsupportedOperationException("not implemented yet");
+		movieList = new MovieList();
 	}
 	
 	@Override
 	public int compareTo(Genre o) {
-		throw new UnsupportedOperationException("not implemented yet");
+		return this.getItem().compareTo(o.getItem());
 	}
 
 	@Override
 	public int hashCode() {
-		throw new UnsupportedOperationException("not implemented yet");
+		return this.getItem().hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		throw new UnsupportedOperationException("not implemented yet");
+		return this.getItem().equals(obj);
+	}
+
+	public MovieList getList()
+	{
+		return movieList;
 	}
 }
 
 class MovieList implements ListInterface<String> {	
+	MyLinkedList<String> movieList;
 	public MovieList() {
+		movieList = new MyLinkedList<String>();
 	}
 
 	@Override
 	public Iterator<String> iterator() {
-		throw new UnsupportedOperationException("not implemented yet");
+		return movieList.iterator();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		throw new UnsupportedOperationException("not implemented yet");
+		return movieList.isEmpty();
 	}
 
 	@Override
 	public int size() {
-		throw new UnsupportedOperationException("not implemented yet");
+		return movieList.size();
 	}
 
 	@Override
 	public void add(String item) {
-		throw new UnsupportedOperationException("not implemented yet");
+		for(var i : movieList)
+		{
+			int comapreResult = i.compareTo(item);
+
+			if(comapreResult < 0)
+			{
+				continue;
+			}
+			else if (comapreResult == 0)
+			{
+				return;
+			}
+			else
+			{
+				movieList.insertAt(item, i);
+				break;
+			}
+		}
 	}
 
 	@Override
 	public String first() {
-		throw new UnsupportedOperationException("not implemented yet");
+		return movieList.head.getNext().getItem();
 	}
 
 	@Override
 	public void removeAll() {
-		throw new UnsupportedOperationException("not implemented yet");
+		movieList.removeAll();
 	}
 }
