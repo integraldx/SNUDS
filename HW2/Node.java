@@ -29,8 +29,7 @@ public class Node<T> {
   }
 
   public final void insertNext(T obj) {
-    var thisNext = this.next.next;
-
+    var thisNext = this.next;
     this.next = new Node<T>(obj);
     this.next.next = thisNext;
   }
@@ -44,6 +43,5 @@ public class Node<T> {
     {
       this.next = this.next.next;
     }
-    throw new UnsupportedOperationException("not implemented yet");
   }
 }

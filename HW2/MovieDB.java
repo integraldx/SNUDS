@@ -17,12 +17,30 @@ public class MovieDB {
     }
 
     public void insert(MovieDBItem item) {
-        // FIXME implement this
-        // Insert the given item to the MovieDB.
+		Genre targetGenre = null;
+		for(Genre g : genreList)
+		{
+			int compareResult = g.getItem().compareTo(item.getGenre());
+			if (compareResult < 0)
+			{
+				continue;
+			}
+			else if (compareResult == 0)
+			{
+				targetGenre = g;
+				break;
+			}
+			else
+			{
+				genreList.insertAt(new Genre(item.getGenre()), g);
+			}
+		}
+		if(targetGenre == null)
+		{
+			genreList.add((targetGenre = new Genre(item.getGenre())));
+		}
 
-    	// Printing functionality is provided for the sake of debugging.
-        // This code should be removed before submitting your work.
-        System.err.printf("[trace] MovieDB: INSERT [%s] [%s]\n", item.getGenre(), item.getTitle());
+		targetGenre.getList().add(item.getTitle());
     }
 
     public void delete(MovieDBItem item) {
@@ -55,22 +73,15 @@ public class MovieDB {
     }
     
     public MyLinkedList<MovieDBItem> items() {
-        // FIXME implement this
-        // Search the given term from the MovieDatabase.
-        // You should return a linked list of QueryResult.
-        // The print command is handled at PrintCmd class.
+		var results = new MyLinkedList<MovieDBItem>();
 
-    	// Printing movie items is the responsibility of PrintCmd class. 
-    	// So you must not use System.out in this method to achieve specs of the assignment.
-
-    	// Printing functionality is provided for the sake of debugging.
-        // This code should be removed before submitting your work.
-        System.err.printf("[trace] MovieDB: ITEMS\n");
-
-    	// FIXME remove this code and return an appropriate MyLinkedList<MovieDBItem> instance.
-    	// This code is supplied for avoiding compilation error.   
-        MyLinkedList<MovieDBItem> results = new MyLinkedList<MovieDBItem>();
-        
+		for(var g: genreList)
+		{
+			for(var m: g.movieList)
+			{
+				results.add(new MovieDBItem(g.getItem(), m));
+			}
+		}
     	return results;
     }
 }
@@ -126,6 +137,7 @@ class MovieList implements ListInterface<String> {
 
 	@Override
 	public void add(String item) {
+		boolean isDone = false;
 		for(var i : movieList)
 		{
 			int comapreResult = i.compareTo(item);
@@ -136,13 +148,19 @@ class MovieList implements ListInterface<String> {
 			}
 			else if (comapreResult == 0)
 			{
+				isDone = true;
 				return;
 			}
 			else
 			{
 				movieList.insertAt(item, i);
+				isDone = true;
 				break;
 			}
+		}
+		if (!isDone)
+		{
+			movieList.add(item);
 		}
 	}
 
