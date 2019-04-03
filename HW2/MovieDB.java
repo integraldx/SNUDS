@@ -44,12 +44,36 @@ public class MovieDB {
     }
 
     public void delete(MovieDBItem item) {
-        // FIXME implement this
-        // Remove the given item from the MovieDB.
-    	
-    	// Printing functionality is provided for the sake of debugging.
-        // This code should be removed before submitting your work.
-        System.err.printf("[trace] MovieDB: DELETE [%s] [%s]\n", item.getGenre(), item.getTitle());
+		Genre targetGenre = null;
+		for(Genre g : genreList)
+		{
+			int compareResult = g.getItem().compareTo(item.getGenre());
+			if (compareResult < 0)
+			{
+				continue;
+			}
+			else if (compareResult == 0)
+			{
+				targetGenre = g;
+				break;
+			}
+			else
+			{
+				return;
+			}
+		}
+		if(targetGenre == null)
+		{
+			return;
+		}
+
+		var list = targetGenre.getList();
+		list.remove(item.getTitle());
+
+		if(targetGenre.getList().size() == 0)
+		{
+			genreList.remove(targetGenre);
+		}
     }
 
     public MyLinkedList<MovieDBItem> search(String term) {
@@ -162,6 +186,11 @@ class MovieList implements ListInterface<String> {
 		{
 			movieList.add(item);
 		}
+	}
+
+	public void remove(String item)
+	{
+		movieList.remove(item);
 	}
 
 	@Override

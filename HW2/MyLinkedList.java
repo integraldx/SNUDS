@@ -67,6 +67,19 @@ public class MyLinkedList<T> implements ListInterface<T> {
 		}
 	}
 
+	public void remove(T target)
+	{
+		Node<T> curr = head;
+		while (curr.getNext() != null)
+		{
+			if(curr.getNext().getItem().equals(target))
+			{
+				curr.removeNext();
+				return;
+			}
+		}
+	}
+
 	@Override
 	public void removeAll() {
 		head.setNext(null);
