@@ -39,13 +39,18 @@ public class CalculatorTest
 			switch(c)
 			{
 				case '+':
-				expressions.add(operand);
+				if(!operand.equals(""))
+					expressions.add(operand);
 				operand = "";
 				while(true)
 				{
 					if(operators.isEmpty())
 						break;
 					char op = operators.peek();
+					if(op == '(')
+					{
+						break;
+					}
 					operators.pop();
 					expressions.add(op + "");
 				}
@@ -54,13 +59,18 @@ public class CalculatorTest
 
 				case '-':
 				// FIXME unary operator "-" not implemented
-				expressions.add(operand);
+				if(!operand.equals(""))
+					expressions.add(operand);
 				operand = "";
 				while(true)
 				{
 					if(operators.isEmpty())
 						break;
 					char op = operators.peek();
+					if(op == '(')
+					{
+						break;
+					}
 					operators.pop();
 					expressions.add(op + "");
 				}
@@ -68,14 +78,15 @@ public class CalculatorTest
 				break;
 
 				case '*':
-				expressions.add(operand);
+				if(!operand.equals(""))
+					expressions.add(operand);
 				operand = "";
 				while(true)
 				{
 					if(operators.isEmpty())
 						break;
 					char op = operators.peek();
-					if(op == '+' || op == '-')
+					if(op == '+' || op == '-' || op == '(')
 						break;
 					operators.pop();
 					expressions.add(op + "");
@@ -84,14 +95,67 @@ public class CalculatorTest
 				break;
 
 				case '/':
+				if(!operand.equals(""))
+					expressions.add(operand);
+				operand = "";
+				while(true)
+				{
+					if(operators.isEmpty())
+						break;
+					char op = operators.peek();
+					if(op == '+' || op == '-' || op == '(')
+						break;
+					operators.pop();
+					expressions.add(op + "");
+				}
+				operators.push('/');
+				break;
 
 				case '%':
+				if(!operand.equals(""))
+					expressions.add(operand);
+				operand = "";
+				while(true)
+				{
+					if(operators.isEmpty())
+						break;
+					char op = operators.peek();
+					if(op == '+' || op == '-' || op == '(')
+						break;
+					operators.pop();
+					expressions.add(op + "");
+				}
+				operators.push('%');
+				break;
 
 				case '^':
+				if(!operand.equals(""))
+					expressions.add(operand);
+				operand = "";
+				while(true)
+				{
+					if(operators.isEmpty())
+						break;
+					char op = operators.peek();
+					if(op == '+' || op == '-' || op == '*' || op == '/' || op == '%' || op == '~' || op == '(')
+						break;
+					operators.pop();
+					expressions.add(op + "");
+				}
+				operators.push('^');
+				break;
 
 				case '(':
+				operators.push('(');
+				break;
 
 				case ')':
+				expressions.add(operand);
+				operand = "";
+				while(operators.peek() != '(')
+					expressions.add(operators.pop() + "");
+				operators.pop();
+				break;
 
 				default:
 				operand = operand + c;
@@ -106,6 +170,7 @@ public class CalculatorTest
 	private static int calculate()
 	{
 		Stack<Integer> st = new Stack<Integer>();
+		int temp;
 		for(String s: expressions)
 		{
 			switch(s)
@@ -123,16 +188,23 @@ public class CalculatorTest
 				break;
 
 				case "/":
+				temp = st.pop();
+				st.push(st.pop() / temp);
+				break;
 
 				case "%":
+				temp = st.pop();
+				st.push(st.pop() % temp);
+				break;
 
 				case "~":
+				st.push(-st.pop());
+				break;
 
 				case "^":
-
-				case "(":
-
-				case ")":
+				temp = st.pop();
+				st.push((int)Math.pow(st.pop(), temp));
+				break;
 
 				default:
 				st.push(Integer.parseInt(s));
