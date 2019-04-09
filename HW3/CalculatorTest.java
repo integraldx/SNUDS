@@ -39,29 +39,49 @@ public class CalculatorTest
 			switch(c)
 			{
 				case '+':
+				expressions.add(operand);
+				operand = "";
+				while(true)
+				{
+					if(operators.isEmpty())
+						break;
+					char op = operators.peek();
+					operators.pop();
+					expressions.add(op + "");
+				}
+				operators.push('+');
+				break;
+
+				case '-':
+				// FIXME unary operator "-" not implemented
+				expressions.add(operand);
+				operand = "";
+				while(true)
+				{
+					if(operators.isEmpty())
+						break;
+					char op = operators.peek();
+					operators.pop();
+					expressions.add(op + "");
+				}
+				operators.push('-');
+				break;
+
+				case '*':
+				expressions.add(operand);
+				operand = "";
 				while(true)
 				{
 					if(operators.isEmpty())
 						break;
 					char op = operators.peek();
 					if(op == '+' || op == '-')
-					{
 						break;
-					}
-					else
-					{
-						operators.pop();
-						expressions.add(op + "");
-					}
+					operators.pop();
+					expressions.add(op + "");
 				}
-				operators.push('+');
-				expressions.add(operand);
-				operand = "";
+				operators.push('*');
 				break;
-
-				case '-':
-
-				case '*':
 
 				case '/':
 
@@ -75,10 +95,12 @@ public class CalculatorTest
 
 				default:
 				operand = operand + c;
+				break;
 			}
 		}
 		expressions.add(operand);
-		expressions.add(operators.pop() + "");
+		while(!operators.isEmpty())
+			expressions.add(operators.pop() + "");
 	}
 
 	private static int calculate()
@@ -93,8 +115,12 @@ public class CalculatorTest
 				break;
 
 				case "-":
+				st.push(-st.pop() + st.pop());
+				break;
 
 				case "*":
+				st.push(st.pop() * st.pop());
+				break;
 
 				case "/":
 
@@ -119,9 +145,16 @@ public class CalculatorTest
 
 	private static void command(String input)
 	{
+		expressions.clear();
 		input = input.replace(" ", "");
 		input = input.replace("\t", "");
 		parseCommand(input);
+
+		for(String s : expressions)
+		{
+			System.out.print(s + " ");
+		}
+		System.out.println();
 		
 		int result = calculate();
 		System.out.println(result);
