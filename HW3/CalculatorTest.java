@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.*;
 
+import javax.lang.model.util.ElementScanner6;
+
 
 
 public class CalculatorTest
@@ -15,14 +17,13 @@ public class CalculatorTest
 			try
 			{
 				String input = br.readLine();
-				if (input.compareTo("q") == 0)
+				if (input.compareTo("q") == 0 || input.compareTo("Q") == 0)
 					break;
 
 				command(input);
 			}
 			catch (Exception e)
 			{
-				System.out.println(e.toString());
 				System.out.println("ERROR");
 			}
 		}
@@ -32,7 +33,7 @@ public class CalculatorTest
 	{
 		Stack<Character> operators = new Stack<Character>();
 		String operand = "";
-
+		boolean isShouldOperand = true;
 
 		for(char c : input.toCharArray())
 		{
@@ -55,26 +56,48 @@ public class CalculatorTest
 					expressions.add(op + "");
 				}
 				operators.push('+');
+				isShouldOperand = true;
 				break;
 
 				case '-':
 				// FIXME unary operator "-" not implemented
-				if(!operand.equals(""))
-					expressions.add(operand);
-				operand = "";
-				while(true)
+				if(isShouldOperand)
 				{
-					if(operators.isEmpty())
-						break;
-					char op = operators.peek();
-					if(op == '(')
+					operand = "";
+					while(true)
 					{
-						break;
+						if(operators.isEmpty())
+							break;
+						char op = operators.peek();
+						if(op == '(' || op == '+' || op == '-' || op == '*' ||op == '/' || op == '%')
+						{
+							break;
+						}
+						operators.pop();
+						expressions.add(op + "");
 					}
-					operators.pop();
-					expressions.add(op + "");
+					operators.push('~');
+					isShouldOperand = true;
 				}
-				operators.push('-');
+				else
+				{
+					if(!operand.equals(""))
+						expressions.add(operand);
+					operand = "";
+					while(true)
+					{
+						if(operators.isEmpty())
+							break;
+						char op = operators.peek();
+						if(op == '(')
+						{
+							break;
+						}
+						operators.pop();
+						expressions.add(op + "");
+					}
+					operators.push('-');
+				}
 				break;
 
 				case '*':
@@ -92,6 +115,7 @@ public class CalculatorTest
 					expressions.add(op + "");
 				}
 				operators.push('*');
+				isShouldOperand = true;
 				break;
 
 				case '/':
@@ -109,6 +133,7 @@ public class CalculatorTest
 					expressions.add(op + "");
 				}
 				operators.push('/');
+				isShouldOperand = true;
 				break;
 
 				case '%':
@@ -126,6 +151,7 @@ public class CalculatorTest
 					expressions.add(op + "");
 				}
 				operators.push('%');
+				isShouldOperand = true;
 				break;
 
 				case '^':
@@ -137,32 +163,39 @@ public class CalculatorTest
 					if(operators.isEmpty())
 						break;
 					char op = operators.peek();
-					if(op == '+' || op == '-' || op == '*' || op == '/' || op == '%' || op == '~' || op == '(')
+					if(op == '+' || op == '-' || op == '*' || op == '/' || op == '%' || op == '~' || op == '(' || op == '^')
 						break;
 					operators.pop();
 					expressions.add(op + "");
 				}
 				operators.push('^');
+				isShouldOperand = true;
 				break;
 
 				case '(':
+				operand = "";
 				operators.push('(');
+				isShouldOperand = true;
 				break;
 
 				case ')':
-				expressions.add(operand);
+				if(!operand.equals(""))
+					expressions.add(operand);
 				operand = "";
 				while(operators.peek() != '(')
 					expressions.add(operators.pop() + "");
 				operators.pop();
+				isShouldOperand = false;
 				break;
 
 				default:
 				operand = operand + c;
+				isShouldOperand = false;
 				break;
 			}
 		}
-		expressions.add(operand);
+		if(!operand.equals(""))
+			expressions.add(operand);
 		while(!operators.isEmpty())
 			expressions.add(operators.pop() + "");
 	}
@@ -221,14 +254,13 @@ public class CalculatorTest
 		input = input.replace(" ", "");
 		input = input.replace("\t", "");
 		parseCommand(input);
+		int result = calculate();
 
 		for(String s : expressions)
 		{
 			System.out.print(s + " ");
 		}
 		System.out.println();
-		
-		int result = calculate();
 		System.out.println(result);
 	}
 }
