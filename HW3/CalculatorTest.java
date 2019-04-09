@@ -285,18 +285,15 @@ public class CalculatorTest
 	{
 		expressions.clear();
 		parseCommand(input);
-		for(String s : expressions)
-		{
-			System.err.print(s + " ");
-		}
-		System.err.print("\n");
 		long result = calculate();
 
+		StringBuilder sb = new StringBuilder();
 		for(String s : expressions)
 		{
-			System.out.print(s + " ");
+			sb.append(s + " ");
 		}
-		System.out.print("\n");
+		sb.deleteCharAt(sb.length() - 1);
+		System.out.print(sb.toString() + "\n");
 		System.out.print(result + "\n");
 	}
 }
