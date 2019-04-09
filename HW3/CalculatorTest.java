@@ -5,6 +5,7 @@ import javax.lang.model.util.ElementScanner6;
 
 
 
+
 public class CalculatorTest
 {
 	static Vector<String> expressions = new Vector<String>();
@@ -24,16 +25,17 @@ public class CalculatorTest
 			}
 			catch (Exception e)
 			{
-				System.out.println("ERROR");
+				System.out.print("ERROR\n");
 			}
 		}
 	}
 
-	private static void parseCommand(String input)
+	private static void parseCommand(String input) throws Exception
 	{
 		Stack<Character> operators = new Stack<Character>();
 		String operand = "";
 		boolean isShouldOperand = true;
+		boolean isShouldOperator = false;
 
 		for(char c : input.toCharArray())
 		{
@@ -57,10 +59,10 @@ public class CalculatorTest
 				}
 				operators.push('+');
 				isShouldOperand = true;
+				isShouldOperator = false;
 				break;
 
 				case '-':
-				// FIXME unary operator "-" not implemented
 				if(isShouldOperand)
 				{
 					operand = "";
@@ -69,7 +71,7 @@ public class CalculatorTest
 						if(operators.isEmpty())
 							break;
 						char op = operators.peek();
-						if(op == '(' || op == '+' || op == '-' || op == '*' ||op == '/' || op == '%')
+						if(op == '(' || op == '+' || op == '-' || op == '*' ||op == '/' || op == '%' || op == '~')
 						{
 							break;
 						}
@@ -78,6 +80,7 @@ public class CalculatorTest
 					}
 					operators.push('~');
 					isShouldOperand = true;
+					isShouldOperator = false;
 				}
 				else
 				{
@@ -97,6 +100,8 @@ public class CalculatorTest
 						expressions.add(op + "");
 					}
 					operators.push('-');
+					isShouldOperand = true;
+					isShouldOperator = false;
 				}
 				break;
 
@@ -116,6 +121,7 @@ public class CalculatorTest
 				}
 				operators.push('*');
 				isShouldOperand = true;
+				isShouldOperator = false;
 				break;
 
 				case '/':
@@ -134,6 +140,7 @@ public class CalculatorTest
 				}
 				operators.push('/');
 				isShouldOperand = true;
+				isShouldOperator = false;
 				break;
 
 				case '%':
@@ -152,6 +159,7 @@ public class CalculatorTest
 				}
 				operators.push('%');
 				isShouldOperand = true;
+				isShouldOperator = false;
 				break;
 
 				case '^':
@@ -170,6 +178,7 @@ public class CalculatorTest
 				}
 				operators.push('^');
 				isShouldOperand = true;
+				isShouldOperator = false;
 				break;
 
 				case '(':
@@ -188,7 +197,27 @@ public class CalculatorTest
 				isShouldOperand = false;
 				break;
 
+				case ' ':
+				case '\t':
+				if(!operand.equals(""))
+				{
+					expressions.add(operand);
+					operand = "";
+					isShouldOperator = true;
+					isShouldOperand = false;
+					break;
+				}
+				else
+				{
+					break;
+				}
+
 				default:
+				if(isShouldOperator)
+				{
+					Exception e = new Exception();
+					throw e;
+				}
 				operand = operand + c;
 				isShouldOperand = false;
 				break;
@@ -200,10 +229,10 @@ public class CalculatorTest
 			expressions.add(operators.pop() + "");
 	}
 
-	private static int calculate()
+	private static long calculate() throws Exception
 	{
-		Stack<Integer> st = new Stack<Integer>();
-		int temp;
+		Stack<Long> st = new Stack<Long>();
+		long temp;
 		for(String s: expressions)
 		{
 			switch(s)
@@ -236,11 +265,15 @@ public class CalculatorTest
 
 				case "^":
 				temp = st.pop();
-				st.push((int)Math.pow(st.pop(), temp));
+				if((st.peek() == 0 && temp == 0) || temp < 0)
+				{
+					throw new Exception();
+				}
+				st.push((long)Math.pow(st.pop(), temp));
 				break;
 
 				default:
-				st.push(Integer.parseInt(s));
+				st.push(Long.parseLong(s));
 				break;
 			}
 		}
@@ -248,19 +281,22 @@ public class CalculatorTest
 		return st.pop();
 	}
 
-	private static void command(String input)
+	private static void command(String input) throws Exception
 	{
 		expressions.clear();
-		input = input.replace(" ", "");
-		input = input.replace("\t", "");
 		parseCommand(input);
-		int result = calculate();
+		for(String s : expressions)
+		{
+			System.err.print(s + " ");
+		}
+		System.err.print("\n");
+		long result = calculate();
 
 		for(String s : expressions)
 		{
 			System.out.print(s + " ");
 		}
-		System.out.println();
-		System.out.println(result);
+		System.out.print("\n");
+		System.out.print(result + "\n");
 	}
 }
