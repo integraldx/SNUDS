@@ -292,7 +292,6 @@ public class CalculatorTest
 		{
 			sb.append(s + " ");
 		}
-		sb.deleteCharAt(sb.length() - 1);
 		System.out.print(sb.toString() + "\n");
 		System.out.print(result + "\n");
 	}
