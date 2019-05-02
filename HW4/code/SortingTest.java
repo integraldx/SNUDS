@@ -142,14 +142,56 @@ public class SortingTest
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     private static int[] DoHeapSort(int[] value)
     {
+		int temp;
 		// Heapify
 		{
-
+			for(int i = value.length / 2 - 1; i >= 0; i--)
+			{
+				if(value[i] < value[2 * i + 1])
+				{
+					temp = value[i];
+					value[i] = value[2 * i + 1];
+					value[2 * i + 1] = temp;
+				}
+				if(2 * i + 2 >= value.length)
+				{
+					break;
+				}
+				if(value[i] < value[2 * i + 2])
+				{
+					temp = value[i];
+					value[i] = value[2 * i + 2];
+					value[2 * i + 2] = temp;
+				}
+			}
 		}
 
 		// Sort
-		{
+		for(int index = value.length - 1; index > 0; index--){
+			temp = value[0];
+			value[0] = value[index];
+			value[index] = temp;
 
+			for(int i = 0; i < index / 2; i++)
+			{
+				if(value[i] < value[2 * i + 1])
+				{
+					temp = value[i];
+					value[i] = value[2 * i + 1];
+					value[2 * i + 1] = temp;
+				}
+
+				if(2 * i + 2 >= index)
+				{
+					break;
+				}
+				if(value[i] < value[2 * i + 2])
+				{
+					temp = value[i];
+					value[i] = value[2 * i + 2];
+					value[2 * i + 2] = temp;
+				}
+			}
 		}
     	return (value);
     }
@@ -157,16 +199,96 @@ public class SortingTest
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     private static int[] DoMergeSort(int[] value)
     {
-    	// TODO : Merge Sort 를 구현하라.
-    	return (value);
+		// Leaf case
+		if(value.length == 1 || value.length == 0)
+		{
+			return value;
+		}
+
+		// subarray sort
+		int[] first = new int[value.length / 2];
+		for(int i = 0; i < value.length / 2; i++)
+		{
+			first[i] = value[i];
+		}
+		first = DoMergeSort(first);
+
+		int[] second = new int[value.length - (value.length / 2)];
+		for(int i = 0 / 2; i < value.length - (value.length / 2); i++)
+		{
+			second[i] = value[value.length / 2 + i];
+		}
+		second = DoMergeSort(second);
+
+		// Merge
+		int[] result = new int[value.length];
+		int resultCounter = 0;
+		int firstCounter = 0, secondCounter = 0;
+		while(firstCounter < first.length && secondCounter < second.length)
+		{
+			result[resultCounter] = first[firstCounter] < second[secondCounter] ? first[firstCounter++] : second[secondCounter++];
+			resultCounter++;
+		}
+		while(firstCounter < first.length)
+		{
+			result[resultCounter] = first[firstCounter];
+			firstCounter++;
+			resultCounter++;
+		}
+		while(secondCounter < second.length)
+		{
+			result[resultCounter] = second[secondCounter];
+			secondCounter++;
+			resultCounter++;
+		}
+
+    	return result;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     private static int[] DoQuickSort(int[] value)
     {
-    	// TODO : Quick Sort 를 구현하라.
+		QuickSort(0, value.length, value);
     	return (value);
-    }
+	}
+	
+	private static void QuickSort(int first, int end, int[] value)
+	{
+		if(end - first <= 1)
+		{
+			return;
+		}
+
+		int temp;
+		int pivotIndex = (new Random()).nextInt(end - first) + first;
+		int pivot = value[pivotIndex];
+
+		int j = first;
+		for(int i = first; i < end; i++)
+		{
+			if(value[i] < pivot)
+			{
+				temp = value[i];
+				value[i] = value[j];
+				value[j] = temp;
+
+				if(j == pivotIndex)
+				{
+					pivotIndex = i;
+				}
+				j++;
+			}
+		}
+		temp = value[j];
+		value[j] = value[pivotIndex];
+		value[pivotIndex] = temp;
+		pivotIndex = j;
+
+
+		QuickSort(first, pivotIndex, value);
+		QuickSort(pivotIndex + 1, end, value);
+	}
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     private static int[] DoRadixSort(int[] value)
