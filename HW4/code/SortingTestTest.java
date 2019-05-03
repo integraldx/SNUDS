@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class SortingTest
+public class SortingTestTest
 {
     public static void main(String args[])
     {
@@ -72,20 +72,21 @@ public class SortingTest
         			default:
         				throw new IOException("잘못된 정렬 방법을 입력했습니다.");
         		}
-        		if (isRandom)
-        		{
-        			// 난수일 경우 수행시간을 출력한다.
-        			System.out.println((System.currentTimeMillis() - t) + " ms");
-        		}
-        		else
-        		{
-        			// 난수가 아닐 경우 정렬된 결과값을 출력한다.
-        			for (int i = 0; i < newvalue.length; i++)
-        			{
-        				System.out.println(newvalue[i]);
-        			}
-        		}
-
+				// 난수일 경우 수행시간을 출력한다.
+				System.out.println((System.currentTimeMillis() - t) + " ms");
+				// 난수가 아닐 경우 정렬된 결과값을 출력한다.
+				for (int i = 0; i < newvalue.length; i++)
+				{
+					System.out.println(newvalue[i]);
+				}
+				for (int i = 1; i < newvalue.length; i++)
+				{
+					if(newvalue[i] < newvalue[i - 1])
+					{
+						System.out.println("Wrong");
+						break;
+					}
+				}
         	}
         }
         catch (IOException e)
@@ -143,28 +144,11 @@ public class SortingTest
     private static int[] DoHeapSort(int[] value)
     {
     	int temp;
-    	// Heapify
-    	{
-    		for(int i = value.length / 2 - 1; i >= 0; i--)
-    		{
-    			if(value[i] < value[2 * i + 1])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 1];
-    				value[2 * i + 1] = temp;
-    			}
-    			if(2 * i + 2 >= value.length)
-    			{
-    				break;
-    			}
-    			if(value[i] < value[2 * i + 2])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 2];
-    				value[2 * i + 2] = temp;
-    			}
-    		}
-    	}
+		// Heapify
+		for(int i = value.length / 2; i >= 0; i--)
+		{
+			PercolateDown(i, value.length, value);
+		}
 
     	// Sort
     	for(int index = value.length - 1; index > 0; index--){
@@ -172,29 +156,37 @@ public class SortingTest
     		value[0] = value[index];
     		value[index] = temp;
 
-    		for(int i = 0; i < index / 2; i++)
-    		{
-    			if(value[i] < value[2 * i + 1])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 1];
-    				value[2 * i + 1] = temp;
-    			}
-
-    			if(2 * i + 2 >= index)
-    			{
-    				break;
-    			}
-    			if(value[i] < value[2 * i + 2])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 2];
-    				value[2 * i + 2] = temp;
-    			}
-    		}
+			PercolateDown(0, index, value);
     	}
         return (value);
-    }
+	}
+	
+	private static void PercolateDown(int start, int end, int[] value)
+	{
+		if(2 * start + 1 < end)
+		{
+			if(value[start] < value[2 * start + 1])
+			{
+				int temp = value[start];
+				value[start] = value[2 * start + 1];
+				value[2 * start + 1] = temp;
+
+				PercolateDown(2 * start + 1, end, value);
+			}
+		}
+
+		if(2 * start + 2 < end)
+		{
+			if(value[start] < value[2 * start + 2])
+			{
+				int temp = value[start];
+				value[start] = value[2 * start + 2];
+				value[2 * start + 2] = temp;
+
+				PercolateDown(2 * start + 2, end, value);
+			}
+		}
+	}
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     private static int[] DoMergeSort(int[] value)
