@@ -143,28 +143,11 @@ public class SortingTest
     private static int[] DoHeapSort(int[] value)
     {
     	int temp;
-    	// Heapify
-    	{
-    		for(int i = value.length / 2 - 1; i >= 0; i--)
-    		{
-    			if(value[i] < value[2 * i + 1])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 1];
-    				value[2 * i + 1] = temp;
-    			}
-    			if(2 * i + 2 >= value.length)
-    			{
-    				break;
-    			}
-    			if(value[i] < value[2 * i + 2])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 2];
-    				value[2 * i + 2] = temp;
-    			}
-    		}
-    	}
+		// Heapify
+		for(int i = value.length / 2; i >= 0; i--)
+		{
+			PercolateDown(i, value.length, value);
+		}
 
     	// Sort
     	for(int index = value.length - 1; index > 0; index--){
@@ -172,29 +155,71 @@ public class SortingTest
     		value[0] = value[index];
     		value[index] = temp;
 
-    		for(int i = 0; i < index / 2; i++)
-    		{
-    			if(value[i] < value[2 * i + 1])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 1];
-    				value[2 * i + 1] = temp;
-    			}
-
-    			if(2 * i + 2 >= index)
-    			{
-    				break;
-    			}
-    			if(value[i] < value[2 * i + 2])
-    			{
-    				temp = value[i];
-    				value[i] = value[2 * i + 2];
-    				value[2 * i + 2] = temp;
-    			}
-    		}
+			PercolateDown(0, index, value);
     	}
         return (value);
-    }
+	}
+	
+	private static void PercolateDown(int start, int end, int[] value)
+	{
+		if(2 * start + 1 < end)
+		{
+			if(2 * start + 2 < end)
+			{
+				if(value[2 * start + 1] < value[2 * start + 2])
+				{
+					if(value[start] < value[2 * start + 2])
+					{
+						int temp = value[start];
+						value[start] = value[2 * start + 2];
+						value[2 * start + 2] = temp;
+
+						PercolateDown(2 * start + 2, end, value);
+					}
+
+					if(value[start] < value[2 * start + 1])
+					{
+						int temp = value[start];
+						value[start] = value[2 * start + 1];
+						value[2 * start + 1] = temp;
+
+						PercolateDown(2 * start + 1, end, value);
+					}
+				}
+				else
+				{
+					if(value[start] < value[2 * start + 1])
+					{
+						int temp = value[start];
+						value[start] = value[2 * start + 1];
+						value[2 * start + 1] = temp;
+
+						PercolateDown(2 * start + 1, end, value);
+					}
+
+					if(value[start] < value[2 * start + 2])
+					{
+						int temp = value[start];
+						value[start] = value[2 * start + 2];
+						value[2 * start + 2] = temp;
+
+						PercolateDown(2 * start + 2, end, value);
+					}
+				}
+			}
+			else
+			{
+				if(value[start] < value[2 * start + 1])
+				{
+					int temp = value[start];
+					value[start] = value[2 * start + 1];
+					value[2 * start + 1] = temp;
+
+					PercolateDown(2 * start + 1, end, value);
+				}
+			}
+		}
+	}
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     private static int[] DoMergeSort(int[] value)
