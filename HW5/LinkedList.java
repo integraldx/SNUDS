@@ -140,6 +140,10 @@ public class LinkedList<T> implements Iterable<T>
         return new MyIterator<T>(this);
     }
 
+    /**
+     * Simple Iterator..
+     * @param <T>
+     */
     public class MyIterator<T> implements Iterator<T>
     {
         LinkedList<T> list;

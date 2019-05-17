@@ -10,9 +10,9 @@
 
 public class Node<T>
 {
-    private T content = null; // Immutable
-    private Node<T> leftNode = null;
-    private Node<T> rightNode = null;
+    protected T content = null; // Immutable
+    protected Node<T> leftNode = null;
+    protected Node<T> rightNode = null;
 
     public Node(T initialContent)
     {
