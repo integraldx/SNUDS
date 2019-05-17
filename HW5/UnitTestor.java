@@ -1,3 +1,4 @@
+
 /**
  * <h1>UnitTestor</h1>
  * This is program to single units used in DS Homework "Matching"
@@ -8,11 +9,11 @@ public class UnitTestor
     {
         if (LinkedListTest())
         {
-            System.out.println("Linked List test : PASSED");
+            System.out.println("LinkedList test : PASSED");
         }
         else 
         {
-            System.out.println("Linked List test : FAILED");
+            System.out.println("LinkedList test : FAILED");
         }
 
         if (AVLNodeTest())
@@ -78,7 +79,7 @@ public class UnitTestor
         try
         {
             AVLTree<String> tree = new AVLTree<String>();
-            AVLTree<String>.AVLNode<String> node = tree.new AVLNode<String>("Hello");
+            AVLTree<String>.AVLNode node = tree.new AVLNode("Hello");
             if (!(node.GetLeftHeight() == 0 && node.GetRightHeight() == 0 && node.GetContent().equals("Hello")))
             {
                 return false;
@@ -102,10 +103,84 @@ public class UnitTestor
             {
                 return false;
             }
+
+            node.InsertRecursive("Ao");
+
+            if (!(
+                node.GetLeftHeight() == 2 && 
+                node.GetRightHeight() == 0 && 
+                node.GetLeftChild().GetLeftHeight() == 1 &&
+                node.GetLeftChild().GetRightHeight() == 1 &&
+                node.GetLeftChild().GetRightChild().GetContent().equals("Ao")
+                ))
+            {
+                return false;
+            }
+
+            node.InsertRecursive("AB");
+
+            if (!(
+                node.GetLeftHeight() == 3 && 
+                node.GetRightHeight() == 0 && 
+                node.GetLeftChild().GetLeftHeight() == 2 &&
+                node.GetLeftChild().GetRightHeight() == 1 &&
+                node.GetLeftChild().GetLeftChild().GetRightHeight() == 1 &&
+                node.GetLeftChild().GetLeftChild().GetRightChild().GetContent().equals("AB")
+                ))
+            {
+                return false;
+            }
+
+            node.DeleteRecursive("Alpha");
+
+            if (!(
+                node.GetLeftHeight() == 2 && 
+                node.GetRightHeight() == 0 && 
+                node.GetLeftChild().GetLeftHeight() == 1 &&
+                node.GetLeftChild().GetRightHeight() == 1 &&
+                node.GetLeftChild().GetLeftChild().GetRightHeight() == 0 &&
+                node.GetLeftChild().GetContent().equals("AB") &&
+                node.GetLeftChild().GetLeftChild().GetRightChild() == null
+                ))
+            {
+                System.err.println( "Deletion Test Failed" + "\n" + 
+                    node.GetLeftHeight() + "\n" + 
+                    node.GetRightHeight() + "\n" + 
+                    node.GetLeftChild().GetLeftHeight() + "\n" + 
+                    node.GetLeftChild().GetRightHeight() + "\n" + 
+                    node.GetLeftChild().GetLeftChild().GetRightHeight() +  "\n" + 
+                    node.GetLeftChild().GetContent() + "\n" + 
+                    (node.GetLeftChild().GetLeftChild().GetRightChild() == null ? "True" : "False")
+                );
+                return false;
+            }
+
+            node.DeleteRecursive("AA");
+
+            if (!(
+                node.GetLeftHeight() == 2 && 
+                node.GetRightHeight() == 0 && 
+                node.GetLeftChild().GetLeftHeight() == 0 &&
+                node.GetLeftChild().GetRightHeight() == 1 &&
+                node.GetLeftChild().GetLeftChild() == null &&
+                node.GetLeftChild().GetRightChild().GetContent().equals("Ao")
+                ))
+            {
+                System.err.println( "Deletion Test Failed" + "\n" + 
+                    (node.GetLeftHeight() == 2  ? "True" : "False" )  + "\n" + 
+                    (node.GetRightHeight() == 0  ? "True" : "False" )  + "\n" + 
+                    (node.GetLeftChild().GetLeftHeight() == 0 ? "True" : "False" )  + "\n" + 
+                    (node.GetLeftChild().GetRightHeight() == 1 ? "True" : "False" ) + "\n" + 
+                    (node.GetLeftChild().GetLeftChild() == null ? "True" : "False" ) + "\n" + 
+                    (node.GetLeftChild().GetRightChild().GetContent().equals("Ao") ? "True" : "False")
+                );
+                return false;
+            }
         }
         catch (Exception e)
         {
             System.err.println(e.toString());
+            e.printStackTrace(System.err);
             return false;
         }
         

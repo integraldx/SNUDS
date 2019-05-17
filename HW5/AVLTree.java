@@ -1,4 +1,5 @@
 import java.lang.UnsupportedOperationException;
+
 /**
  * <h1>AVLTree</h1>
  * This is AVL tree class made for DS Homework "Matching".
@@ -10,7 +11,7 @@ import java.lang.UnsupportedOperationException;
  */
 public class AVLTree<T extends Comparable<T>>
 {
-    public class AVLNode<T extends Comparable<T>> extends Node<T>
+    public class AVLNode extends Node<T>
     {
         protected int leftHeight = 0;
         protected int rightHeight = 0;
@@ -20,27 +21,32 @@ public class AVLTree<T extends Comparable<T>>
             super(initialContent);
         }
 
-        public AVLNode(T initialContent, AVLNode<T> initialLeft, AVLNode<T> initialRight)
+        public AVLNode(T initialContent, AVLNode initialLeft, AVLNode initialRight)
         {
             super(initialContent, initialLeft, initialRight);
         }
 
-        public AVLNode<T> GetLeftChild()
+        private void SetContent(T newContent)
         {
-            return (AVLNode<T>)leftNode;
+            content = newContent;
         }
 
-        public AVLNode<T> GetRightChild()
+        public AVLNode GetLeftChild()
         {
-            return (AVLNode<T>)rightNode;
+            return (AVLNode)leftNode;
         }
 
-        public void SetLeftChild(AVLNode<T> newLeft)
+        public AVLNode GetRightChild()
+        {
+            return (AVLNode)rightNode;
+        }
+
+        public void SetLeftChild(AVLNode newLeft)
         {
             leftNode = newLeft;
         }
 
-        public void SetRightChild(AVLNode<T> newRight)
+        public void SetRightChild(AVLNode newRight)
         {
             rightNode = newRight;
         }
@@ -57,17 +63,18 @@ public class AVLTree<T extends Comparable<T>>
 
         public boolean InsertRecursive(T newItem)
         {
-            int compareResult = content.compareTo(newItem);
+            int compareResult = GetContent().compareTo(newItem);
             boolean insertResult = false;
+            int totalHeight = leftHeight > rightHeight ? leftHeight : rightHeight;
             if (compareResult > 0)
             {
-                if (leftNode != null)
+                if (GetLeftChild() != null)
                 {
-                    insertResult = ((AVLNode<T>)leftNode).InsertRecursive(newItem);
+                    insertResult = GetLeftChild().InsertRecursive(newItem);
                 }
                 else
                 {
-                    SetLeftChild(new AVLNode<T>(newItem));
+                    SetLeftChild(new AVLNode(newItem));
                     insertResult = true;
                 }
 
@@ -76,15 +83,15 @@ public class AVLTree<T extends Comparable<T>>
                     leftHeight += 1;
                 }
             }
-            else if (content.compareTo(newItem) < 0)
+            else if (compareResult < 0)
             {
-                if (rightNode != null)
+                if (GetRightChild() != null)
                 {
-                    insertResult = ((AVLNode<T>)rightNode).InsertRecursive(newItem);
+                    insertResult = GetRightChild().InsertRecursive(newItem);
                 }
                 else
                 {
-                    SetRightChild(new AVLNode<T>(newItem));
+                    SetRightChild(new AVLNode(newItem));
                     insertResult = true;
                 }
 
@@ -98,13 +105,117 @@ public class AVLTree<T extends Comparable<T>>
                 content = newItem;
             }
 
+            if(totalHeight == (leftHeight > rightHeight ? leftHeight : rightHeight))
+            {
+                insertResult = false;
+            }
+
             return insertResult;
         }
 
-        public void DeleteRecursive(T searchKey)
+        public boolean DeleteRecursive(T searchKey)
         {
-            throw new UnsupportedOperationException();
+            int compareResult = GetContent().compareTo(searchKey);
+            boolean deleteResult = false;
+            int totalHeight = leftHeight > rightHeight ? leftHeight : rightHeight;
+            if (compareResult > 0)
+            {
+                if (GetLeftChild() != null)
+                {
+                    if (GetLeftChild().GetContent().equals(searchKey))
+                    {
+                        AVLNode toDeleteNode = GetLeftChild();
+                        AVLNode replaceNode = toDeleteNode.GetClosestNode();
+                        if(replaceNode != null)
+                        {
+                            deleteResult = toDeleteNode.DeleteRecursive(replaceNode.GetContent());
+                            toDeleteNode.SetContent(replaceNode.GetContent());
+                        }
+                        else
+                        {
+                            SetLeftChild(null);
+                            deleteResult = true;
+                        }
+                    }
+                    else
+                    {
+                        deleteResult = GetLeftChild().DeleteRecursive(searchKey);
+                    }
+                }
+
+                if (deleteResult)
+                {
+                    leftHeight -= 1;
+                }
+            }
+            else if (compareResult < 0)
+            {
+                if (GetRightChild() != null)
+                {
+                    if (GetRightChild().GetContent().equals(searchKey))
+                    {
+                        AVLNode toDeleteNode = GetRightChild();
+                        AVLNode replaceNode = toDeleteNode.GetClosestNode();
+                        if(replaceNode != null)
+                        {
+                            deleteResult = toDeleteNode.DeleteRecursive(replaceNode.GetContent());
+                            toDeleteNode.SetContent(replaceNode.GetContent());
+                        }
+                        else
+                        {
+                            SetRightChild(null);
+                            deleteResult = true;
+                        }
+                    }
+                    else
+                    {
+                        deleteResult = GetRightChild().DeleteRecursive(searchKey);
+                    }
+                }
+
+                if (deleteResult)
+                {
+                    rightHeight -= 1;
+                }
+            }
+            else
+            {
+                deleteResult = true;
+            }
+
+            if(totalHeight == (leftHeight > rightHeight ? leftHeight : rightHeight))
+            {
+                deleteResult = false;
+            }
+
+            return deleteResult;
         }
+
+        AVLNode GetClosestNode()
+        {
+            AVLNode result = null;
+            if (GetLeftChild() != null)
+            {
+                result = GetLeftChild();
+
+                while(result.GetRightChild() != null)
+                {
+                    result = result.GetRightChild();
+                }
+            }
+            else if (GetRightChild() != null)
+            {
+                result = GetRightChild();
+
+                while(result.GetLeftChild() != null)
+                {
+                    result = result.GetLeftChild();
+                }
+            }
+
+            return result;
+        }
+
 
         public T SearchRecursive(T searchKey)
         {
@@ -112,14 +223,14 @@ public class AVLTree<T extends Comparable<T>>
         }
     }
 
-    private AVLNode<T> rootNode;
+    private AVLNode dummyRootNode;
 
     /**
      * Initializes new AVLTree
      */
     public AVLTree()
     {
-        rootNode = null;
+        dummyRootNode = null;
     }
 
     public void Insert(T newItem)

@@ -9,3 +9,6 @@ test: *.java
 run: *.java
 	javac Matching.java -encoding utf8
 	java Matching
+
+clean:
+	pwsh -Command rm *.class

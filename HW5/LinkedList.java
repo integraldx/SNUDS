@@ -1,4 +1,3 @@
-import java.lang.UnsupportedOperationException;
 import java.util.*;
 
 
@@ -137,14 +136,14 @@ public class LinkedList<T> implements Iterable<T>
 
     public Iterator<T> iterator()
     {
-        return new MyIterator<T>(this);
+        return new MyIterator(this);
     }
 
     /**
      * Simple Iterator..
      * @param <T>
      */
-    public class MyIterator<T> implements Iterator<T>
+    public class MyIterator implements Iterator<T>
     {
         LinkedList<T> list;
         Node<T> currentNode;
