@@ -121,6 +121,18 @@ public class AVLTree<T extends Comparable<T>>
                 {
                     leftHeight += 1;
                 }
+
+                int balanceFactor = GetLeftChild().GetLeftHeight() - GetLeftChild().GetRightHeight();
+                if (balanceFactor > 1)
+                {
+                    SetLeftChild(GetLeftChild().RotateCW());
+                }
+                else if (balanceFactor < -1)
+                {
+                    SetLeftChild(GetLeftChild().RotateCCW());
+                }
+
+                leftHeight = GetLeftChild().GetHeight();
             }
             else if (compareResult < 0)
             {
@@ -138,6 +150,18 @@ public class AVLTree<T extends Comparable<T>>
                 {
                     rightHeight += 1;
                 }
+
+                int balanceFactor = GetRightChild().GetLeftHeight() - GetRightChild().GetRightHeight();
+                if (balanceFactor > 1)
+                {
+                    SetRightChild(GetRightChild().RotateCW());
+                }
+                else if (balanceFactor < -1)
+                {
+                    SetRightChild(GetRightChild().RotateCCW());
+                }
+
+                rightHeight = GetRightChild().GetHeight();
             }
             else
             {
@@ -281,7 +305,7 @@ public class AVLTree<T extends Comparable<T>>
                 finalNewNode.SetRightChild(this);
                 this.SetLeftChild(mid);
 
-                this.leftHeight = mid.GetHeight();
+                this.leftHeight = finalNewNode.GetRightHeight();
                 finalNewNode.rightHeight = this.GetHeight();
             }
 

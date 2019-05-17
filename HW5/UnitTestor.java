@@ -131,61 +131,20 @@ public class UnitTestor
                 return false;
             }
 
-            node.DeleteRecursive("Alpha");
+            node.InsertRecursive("AAB");
 
             if (!(
-                node.GetLeftHeight() == 2 && 
+                node.GetLeftHeight() == 3 && 
                 node.GetRightHeight() == 0 && 
-                node.GetLeftChild().GetLeftHeight() == 1 &&
-                node.GetLeftChild().GetRightHeight() == 1 &&
-                node.GetLeftChild().GetLeftChild().GetRightHeight() == 0 &&
+                node.GetLeftChild().GetLeftHeight() == 2 &&
+                node.GetLeftChild().GetRightHeight() == 2 &&
+                node.GetLeftChild().GetLeftChild().GetRightHeight() == 1 &&
+                node.GetLeftChild().GetRightChild().GetRightHeight() == 1 &&
                 node.GetLeftChild().GetContent().equals("AB") &&
-                node.GetLeftChild().GetLeftChild().GetRightChild() == null
-                ))
-            {
-                System.err.println( "Deletion Test Failed" + "\n" + 
-                    node.GetLeftHeight() + "\n" + 
-                    node.GetRightHeight() + "\n" + 
-                    node.GetLeftChild().GetLeftHeight() + "\n" + 
-                    node.GetLeftChild().GetRightHeight() + "\n" + 
-                    node.GetLeftChild().GetLeftChild().GetRightHeight() +  "\n" + 
-                    node.GetLeftChild().GetContent() + "\n" + 
-                    (node.GetLeftChild().GetLeftChild().GetRightChild() == null ? "True" : "False")
-                );
-                return false;
-            }
-
-            node.DeleteRecursive("AA");
-
-            if (!(
-                node.GetLeftHeight() == 2 && 
-                node.GetRightHeight() == 0 && 
-                node.GetLeftChild().GetLeftHeight() == 0 &&
-                node.GetLeftChild().GetRightHeight() == 1 &&
-                node.GetLeftChild().GetLeftChild() == null &&
-                node.GetLeftChild().GetRightChild().GetContent().equals("Ao")
-                ))
-            {
-                System.err.println( "Deletion Test Failed" + "\n" + 
-                    (node.GetLeftHeight() == 2  ? "True" : "False" )  + "\n" + 
-                    (node.GetRightHeight() == 0  ? "True" : "False" )  + "\n" + 
-                    (node.GetLeftChild().GetLeftHeight() == 0 ? "True" : "False" )  + "\n" + 
-                    (node.GetLeftChild().GetRightHeight() == 1 ? "True" : "False" ) + "\n" + 
-                    (node.GetLeftChild().GetLeftChild() == null ? "True" : "False" ) + "\n" + 
-                    (node.GetLeftChild().GetRightChild().GetContent().equals("Ao") ? "True" : "False")
-                );
-                return false;
-            }
-
-            node = node.RotateCW();
-
-            if (!(
-                node.GetLeftHeight() == 0 && 
-                node.GetRightHeight() == 2 && 
-                node.GetLeftChild() == null &&
-                node.GetRightChild().GetRightHeight() == 0 &&
-                node.GetRightChild().GetLeftHeight() == 1 &&
-                node.GetRightChild().GetLeftChild().GetContent().equals("Ao")
+                node.GetLeftChild().GetLeftChild().GetContent().equals("AA") &&
+                node.GetLeftChild().GetLeftChild().GetRightChild().GetContent().equals("AAB") &&
+                node.GetLeftChild().GetRightChild().GetContent().equals("Alpha") &&
+                node.GetLeftChild().GetRightChild().GetRightChild().GetContent().equals("Ao") 
                 ))
             {
                 return false;
