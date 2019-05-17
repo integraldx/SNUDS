@@ -1,3 +1,4 @@
+import java.util.Random;
 
 /**
  * <h1>UnitTestor</h1>
@@ -79,76 +80,39 @@ public class UnitTestor
         try
         {
             AVLTree<String> tree = new AVLTree<String>();
-            AVLTree<String>.AVLNode node = tree.new AVLNode("Hello");
-            if (!(node.GetLeftHeight() == 0 && node.GetRightHeight() == 0 && node.GetContent().equals("Hello")))
+            AVLTree<String>.AVLNode node = tree.new AVLNode("");
+
+            Random rand = new Random();
+
+            LinkedList<String> ll = new LinkedList<String>();
+
+            for (int i = 0; i < 100; i++)
             {
-                return false;
+                ll.Add(rand.nextInt() + "");
+                node.InsertRecursive(ll.At(ll.Count() - 1));
+
+                if (!node.GetRightChild().CheckCorrect())
+                {
+                    return false;
+                }
             }
 
-            node.InsertRecursive("Alpha");
+            System.out.println("Insertion passed");
 
-            if (!(node.GetLeftHeight() == 1 && node.GetRightHeight() == 0 && node.GetLeftChild().GetContent().equals("Alpha")))
+            for (int i = 0; i < 100; i++)
             {
-                return false;
+                int rdNum = rand.nextInt(ll.Count());
+                node.DeleteRecursive(ll.At(rdNum));
+                ll.DeleteAt(rdNum);
+
+                if (!node.GetRightChild().CheckCorrect())
+                {
+                    node.Print(0);
+                    return false;
+                }
             }
 
-            node.InsertRecursive("AA");
-            
-            if (!(
-                node.GetLeftHeight() == 2 && 
-                node.GetRightHeight() == 0 && 
-                node.GetLeftChild().GetLeftHeight() == 1 &&
-                node.GetLeftChild().GetLeftChild().GetContent().equals("AA")
-                ))
-            {
-                return false;
-            }
-
-            node.InsertRecursive("Ao");
-
-            if (!(
-                node.GetLeftHeight() == 2 && 
-                node.GetRightHeight() == 0 && 
-                node.GetLeftChild().GetLeftHeight() == 1 &&
-                node.GetLeftChild().GetRightHeight() == 1 &&
-                node.GetLeftChild().GetRightChild().GetContent().equals("Ao")
-                ))
-            {
-                return false;
-            }
-
-            node.InsertRecursive("AB");
-
-            if (!(
-                node.GetLeftHeight() == 3 && 
-                node.GetRightHeight() == 0 && 
-                node.GetLeftChild().GetLeftHeight() == 2 &&
-                node.GetLeftChild().GetRightHeight() == 1 &&
-                node.GetLeftChild().GetLeftChild().GetRightHeight() == 1 &&
-                node.GetLeftChild().GetLeftChild().GetRightChild().GetContent().equals("AB")
-                ))
-            {
-                return false;
-            }
-
-            node.InsertRecursive("AAB");
-
-            if (!(
-                node.GetLeftHeight() == 3 && 
-                node.GetRightHeight() == 0 && 
-                node.GetLeftChild().GetLeftHeight() == 2 &&
-                node.GetLeftChild().GetRightHeight() == 2 &&
-                node.GetLeftChild().GetLeftChild().GetRightHeight() == 1 &&
-                node.GetLeftChild().GetRightChild().GetRightHeight() == 1 &&
-                node.GetLeftChild().GetContent().equals("AB") &&
-                node.GetLeftChild().GetLeftChild().GetContent().equals("AA") &&
-                node.GetLeftChild().GetLeftChild().GetRightChild().GetContent().equals("AAB") &&
-                node.GetLeftChild().GetRightChild().GetContent().equals("Alpha") &&
-                node.GetLeftChild().GetRightChild().GetRightChild().GetContent().equals("Ao") 
-                ))
-            {
-                return false;
-            }
+            System.out.println("Deletion passed");
         }
         catch (Exception e)
         {

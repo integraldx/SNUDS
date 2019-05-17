@@ -104,7 +104,6 @@ public class AVLTree<T extends Comparable<T>>
         {
             int compareResult = GetContent().compareTo(newItem);
             boolean insertResult = false;
-            int totalHeight = leftHeight > rightHeight ? leftHeight : rightHeight;
             if (compareResult > 0)
             {
                 if (GetLeftChild() != null)
@@ -117,22 +116,29 @@ public class AVLTree<T extends Comparable<T>>
                     insertResult = true;
                 }
 
-                if (insertResult)
-                {
-                    leftHeight += 1;
-                }
+                leftHeight = GetLeftChild().GetHeight();
 
-                int balanceFactor = GetLeftChild().GetLeftHeight() - GetLeftChild().GetRightHeight();
+                var toBeChecked = GetLeftChild();
+                int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
                 if (balanceFactor > 1)
                 {
-                    SetLeftChild(GetLeftChild().RotateCW());
+                    if (toBeChecked.GetLeftChild().GetLeftHeight() - toBeChecked.GetLeftChild().GetRightHeight() < 0)
+                    {
+                        toBeChecked.SetLeftChild(toBeChecked.GetLeftChild().RotateCCW());
+                    }
+                    SetLeftChild(toBeChecked.RotateCW());
+                    leftHeight = GetLeftChild().GetHeight();
                 }
                 else if (balanceFactor < -1)
                 {
-                    SetLeftChild(GetLeftChild().RotateCCW());
+                    if (toBeChecked.GetRightChild().GetRightHeight() - toBeChecked.GetRightChild().GetLeftHeight() < 0)
+                    {
+                        toBeChecked.SetRightChild(toBeChecked.GetRightChild().RotateCW());
+                    }
+                    SetLeftChild(toBeChecked.RotateCCW());
+                    leftHeight = GetLeftChild().GetHeight();
                 }
 
-                leftHeight = GetLeftChild().GetHeight();
             }
             else if (compareResult < 0)
             {
@@ -146,31 +152,33 @@ public class AVLTree<T extends Comparable<T>>
                     insertResult = true;
                 }
 
-                if (insertResult)
-                {
-                    rightHeight += 1;
-                }
+                rightHeight = GetRightChild().GetHeight();
 
-                int balanceFactor = GetRightChild().GetLeftHeight() - GetRightChild().GetRightHeight();
+                var toBeChecked = GetRightChild();
+                int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
                 if (balanceFactor > 1)
                 {
-                    SetRightChild(GetRightChild().RotateCW());
+                    if (toBeChecked.GetLeftChild().GetLeftHeight() - toBeChecked.GetLeftChild().GetRightHeight() < 0)
+                    {
+                        toBeChecked.SetLeftChild(toBeChecked.GetLeftChild().RotateCCW());
+                    }
+                    SetRightChild(toBeChecked.RotateCW());
+                    rightHeight = GetRightChild().GetHeight();
                 }
                 else if (balanceFactor < -1)
                 {
-                    SetRightChild(GetRightChild().RotateCCW());
+                    if (toBeChecked.GetRightChild().GetRightHeight() - toBeChecked.GetRightChild().GetLeftHeight() < 0)
+                    {
+                        toBeChecked.SetRightChild(toBeChecked.GetRightChild().RotateCW());
+                    }
+                    SetRightChild(toBeChecked.RotateCCW());
+                    rightHeight = GetRightChild().GetHeight();
                 }
 
-                rightHeight = GetRightChild().GetHeight();
             }
             else
             {
                 content = newItem;
-            }
-
-            if(totalHeight == (leftHeight > rightHeight ? leftHeight : rightHeight))
-            {
-                insertResult = false;
             }
 
             return insertResult;
@@ -211,9 +219,23 @@ public class AVLTree<T extends Comparable<T>>
                     }
                 }
 
-                if (deleteResult)
+                if (GetLeftChild() != null)
                 {
-                    leftHeight -= 1;
+                    int balanceFactor = GetLeftChild().GetLeftHeight() - GetLeftChild().GetRightHeight();
+                    if (balanceFactor > 1)
+                    {
+                        SetLeftChild(GetLeftChild().RotateCW());
+                    }
+                    else if (balanceFactor < -1)
+                    {
+                        SetLeftChild(GetLeftChild().RotateCCW());
+                    }
+
+                    leftHeight = GetLeftChild().GetHeight();
+                }
+                else
+                {
+                    leftHeight = 0;
                 }
             }
             else if (compareResult < 0)
@@ -241,9 +263,22 @@ public class AVLTree<T extends Comparable<T>>
                     }
                 }
 
-                if (deleteResult)
+                if(GetRightChild() != null)
                 {
-                    rightHeight -= 1;
+                    int balanceFactor = GetRightChild().GetLeftHeight() - GetRightChild().GetRightHeight();
+                    if (balanceFactor > 1)
+                    {
+                        SetRightChild(GetRightChild().RotateCW());
+                    }
+                    else if (balanceFactor < -1)
+                    {
+                        SetRightChild(GetRightChild().RotateCCW());
+                    }
+                    rightHeight = GetRightChild().GetHeight();
+                }
+                else
+                {
+                    rightHeight = 0;
                 }
             }
             else
@@ -326,10 +361,11 @@ public class AVLTree<T extends Comparable<T>>
             else
             {
                 var mid = finalNewNode.GetLeftChild();
+                
                 finalNewNode.SetLeftChild(this);
                 this.SetRightChild(mid);
 
-                this.rightHeight = mid.GetHeight();
+                this.rightHeight = finalNewNode.GetLeftHeight();
                 finalNewNode.leftHeight = this.GetHeight();
             }
 
@@ -343,6 +379,64 @@ public class AVLTree<T extends Comparable<T>>
         public int GetHeight()
         {
             return (GetLeftHeight() > GetRightHeight() ? GetLeftHeight() : GetRightHeight()) + 1;
+        }
+
+        public void Print(int level)
+        {
+            // FIXME this is for debug
+            if (level == 0)
+            {
+                System.err.println("-----------------------------------------");
+            }
+
+            if (GetLeftChild() != null)
+            {
+                GetLeftChild().Print(level + 1);
+            }
+            System.err.println(("   |".repeat(level + 1)) + leftHeight);
+            System.err.println(("   |".repeat(level + 1)) + "l");
+
+            System.err.println(("   |".repeat(level)) + GetContent());
+
+            System.err.println(("   |".repeat(level + 1)) + "r");
+            System.err.println(("   |".repeat(level + 1)) + rightHeight);
+            if (GetRightChild() != null)
+            {
+                GetRightChild().Print(level + 1);
+            }
+        }
+
+        public boolean CheckCorrect()
+        {
+            // FIXME this is for debug
+            if(Math.abs(GetLeftHeight() - GetRightHeight()) > 1)
+            {
+                return false;
+            }
+            if (GetLeftChild() != null)
+            {
+                if (!GetLeftChild().CheckCorrect())
+                {
+                    return false;
+                }
+                if(GetLeftChild().GetContent().compareTo(GetContent()) > 0)
+                {
+                    return false;
+                }
+            }
+            if (GetRightChild() != null)
+            {
+                if (!GetRightChild().CheckCorrect())
+                {
+                    return false;
+                }
+                if(GetRightChild().GetContent().compareTo(GetContent()) < 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 
