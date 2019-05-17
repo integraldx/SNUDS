@@ -86,7 +86,7 @@ public class UnitTestor
 
             LinkedList<String> ll = new LinkedList<String>();
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 ll.Add(rand.nextInt() + "");
                 node.InsertRecursive(ll.At(ll.Count() - 1));
@@ -99,7 +99,7 @@ public class UnitTestor
 
             System.out.println("Insertion passed");
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 int rdNum = rand.nextInt(ll.Count());
                 node.DeleteRecursive(ll.At(rdNum));

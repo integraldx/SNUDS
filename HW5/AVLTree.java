@@ -189,11 +189,9 @@ public class AVLTree<T extends Comparable<T>>
          * @param searchKey : item content to delete
          * @return : deletion status (used to determine height change)
          */
-        public boolean DeleteRecursive(T searchKey)
+        public void DeleteRecursive(T searchKey)
         {
             int compareResult = GetContent().compareTo(searchKey);
-            boolean deleteResult = false;
-            int totalHeight = leftHeight > rightHeight ? leftHeight : rightHeight;
             if (compareResult > 0)
             {
                 if (GetLeftChild() != null)
@@ -204,33 +202,40 @@ public class AVLTree<T extends Comparable<T>>
                         AVLNode replaceNode = toDeleteNode.GetClosestNode();
                         if(replaceNode != null)
                         {
-                            deleteResult = toDeleteNode.DeleteRecursive(replaceNode.GetContent());
+                            toDeleteNode.DeleteRecursive(replaceNode.GetContent());
                             toDeleteNode.SetContent(replaceNode.GetContent());
                         }
                         else
                         {
                             SetLeftChild(null);
-                            deleteResult = true;
                         }
                     }
                     else
                     {
-                        deleteResult = GetLeftChild().DeleteRecursive(searchKey);
+                        GetLeftChild().DeleteRecursive(searchKey);
                     }
                 }
 
                 if (GetLeftChild() != null)
                 {
-                    int balanceFactor = GetLeftChild().GetLeftHeight() - GetLeftChild().GetRightHeight();
+                    var toBeChecked = GetLeftChild();
+                    int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
                     if (balanceFactor > 1)
                     {
-                        SetLeftChild(GetLeftChild().RotateCW());
+                        if (toBeChecked.GetLeftChild().GetLeftHeight() - toBeChecked.GetLeftChild().GetRightHeight() < 0)
+                        {
+                            toBeChecked.SetLeftChild(toBeChecked.GetLeftChild().RotateCCW());
+                        }
+                        SetLeftChild(toBeChecked.RotateCW());
                     }
                     else if (balanceFactor < -1)
                     {
-                        SetLeftChild(GetLeftChild().RotateCCW());
+                        if (toBeChecked.GetRightChild().GetRightHeight() - toBeChecked.GetRightChild().GetLeftHeight() < 0)
+                        {
+                            toBeChecked.SetRightChild(toBeChecked.GetRightChild().RotateCW());
+                        }
+                        SetLeftChild(toBeChecked.RotateCCW());
                     }
-
                     leftHeight = GetLeftChild().GetHeight();
                 }
                 else
@@ -248,31 +253,39 @@ public class AVLTree<T extends Comparable<T>>
                         AVLNode replaceNode = toDeleteNode.GetClosestNode();
                         if(replaceNode != null)
                         {
-                            deleteResult = toDeleteNode.DeleteRecursive(replaceNode.GetContent());
+                            toDeleteNode.DeleteRecursive(replaceNode.GetContent());
                             toDeleteNode.SetContent(replaceNode.GetContent());
                         }
                         else
                         {
                             SetRightChild(null);
-                            deleteResult = true;
                         }
                     }
                     else
                     {
-                        deleteResult = GetRightChild().DeleteRecursive(searchKey);
+                        GetRightChild().DeleteRecursive(searchKey);
                     }
                 }
 
                 if(GetRightChild() != null)
                 {
-                    int balanceFactor = GetRightChild().GetLeftHeight() - GetRightChild().GetRightHeight();
+                    var toBeChecked = GetRightChild();
+                    int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
                     if (balanceFactor > 1)
                     {
-                        SetRightChild(GetRightChild().RotateCW());
+                        if (toBeChecked.GetLeftChild().GetLeftHeight() - toBeChecked.GetLeftChild().GetRightHeight() < 0)
+                        {
+                            toBeChecked.SetLeftChild(toBeChecked.GetLeftChild().RotateCCW());
+                        }
+                        SetRightChild(toBeChecked.RotateCW());
                     }
                     else if (balanceFactor < -1)
                     {
-                        SetRightChild(GetRightChild().RotateCCW());
+                        if (toBeChecked.GetRightChild().GetRightHeight() - toBeChecked.GetRightChild().GetLeftHeight() < 0)
+                        {
+                            toBeChecked.SetRightChild(toBeChecked.GetRightChild().RotateCW());
+                        }
+                        SetRightChild(toBeChecked.RotateCCW());
                     }
                     rightHeight = GetRightChild().GetHeight();
                 }
@@ -281,17 +294,6 @@ public class AVLTree<T extends Comparable<T>>
                     rightHeight = 0;
                 }
             }
-            else
-            {
-                deleteResult = true;
-            }
-
-            if(totalHeight == (leftHeight > rightHeight ? leftHeight : rightHeight))
-            {
-                deleteResult = false;
-            }
-
-            return deleteResult;
         }
 
         /**
@@ -447,7 +449,7 @@ public class AVLTree<T extends Comparable<T>>
      */
     public AVLTree()
     {
-        dummyRootNode = null;
+
     }
 
     public void Insert(T newItem)
