@@ -176,6 +176,20 @@ public class UnitTestor
                 );
                 return false;
             }
+
+            node = node.RotateCW();
+
+            if (!(
+                node.GetLeftHeight() == 0 && 
+                node.GetRightHeight() == 2 && 
+                node.GetLeftChild() == null &&
+                node.GetRightChild().GetRightHeight() == 0 &&
+                node.GetRightChild().GetLeftHeight() == 1 &&
+                node.GetRightChild().GetLeftChild().GetContent().equals("Ao")
+                ))
+            {
+                return false;
+            }
         }
         catch (Exception e)
         {

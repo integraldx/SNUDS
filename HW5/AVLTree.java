@@ -1,5 +1,3 @@
-import java.lang.UnsupportedOperationException;
-
 /**
  * <h1>AVLTree</h1>
  * This is AVL tree class made for DS Homework "Matching".
@@ -16,51 +14,92 @@ public class AVLTree<T extends Comparable<T>>
         protected int leftHeight = 0;
         protected int rightHeight = 0;
 
+        /**
+         * Initializes new AVLNode with no childs
+         * @param initialContent : initial value
+         */
         public AVLNode(T initialContent)
         {
             super(initialContent);
         }
 
+        /**
+         * Initializes new AVLNode with given childs
+         * @param initialContent : initial value
+         * @param initialLeft : left child
+         * @param initialRight : right child
+         */
         public AVLNode(T initialContent, AVLNode initialLeft, AVLNode initialRight)
         {
             super(initialContent, initialLeft, initialRight);
         }
 
+        /**
+         * Sets new content. Used in deletion.
+         * @param newContent 
+         */
         private void SetContent(T newContent)
         {
             content = newContent;
         }
 
+        /**
+         * Gets left child node
+         */
         public AVLNode GetLeftChild()
         {
             return (AVLNode)leftNode;
         }
 
+        /**
+         * Gets right child node
+         */
         public AVLNode GetRightChild()
         {
             return (AVLNode)rightNode;
         }
 
-        public void SetLeftChild(AVLNode newLeft)
+        /**
+         * Sets left child node.
+         * @param newLeft
+         */
+        private void SetLeftChild(AVLNode newLeft)
         {
             leftNode = newLeft;
         }
-
-        public void SetRightChild(AVLNode newRight)
+        
+        /**
+         * Sets right child node.
+         * @param newRight
+         */
+        private void SetRightChild(AVLNode newRight)
         {
             rightNode = newRight;
         }
 
+        /**
+         * Gets left height value
+         * @return left height
+         */
         public int GetLeftHeight()
         {
             return leftHeight;
         }
 
+        /**
+         * Gets right height value
+         * @return right height
+         */
         public int GetRightHeight()
         {
             return rightHeight;
         }
 
+        /**
+         * Inserts new item recursively
+         * @param newItem : New item to be inserted
+         * @return : Insertion status (used to determine height change)
+         */
         public boolean InsertRecursive(T newItem)
         {
             int compareResult = GetContent().compareTo(newItem);
@@ -113,6 +152,11 @@ public class AVLTree<T extends Comparable<T>>
             return insertResult;
         }
 
+        /**
+         * Deletes given item recursively
+         * @param searchKey : item content to delete
+         * @return : deletion status (used to determine height change)
+         */
         public boolean DeleteRecursive(T searchKey)
         {
             int compareResult = GetContent().compareTo(searchKey);
@@ -191,6 +235,10 @@ public class AVLTree<T extends Comparable<T>>
             return deleteResult;
         }
 
+        /**
+         * Gets closest node from this. Used in deletion
+         * @return closest node
+         */
         AVLNode GetClosestNode()
         {
             AVLNode result = null;
@@ -216,10 +264,61 @@ public class AVLTree<T extends Comparable<T>>
             return result;
         }
 
-
-        public T SearchRecursive(T searchKey)
+        /**
+         * Rotates subtree clockwise and returns new subtree's root
+         * @return new Root
+         */
+        public AVLNode RotateCW()
         {
-            throw new UnsupportedOperationException();
+            AVLNode finalNewNode = GetLeftChild();
+            if(finalNewNode == null)
+            {
+                return this;
+            }
+            else
+            {
+                var mid = finalNewNode.GetRightChild();
+                finalNewNode.SetRightChild(this);
+                this.SetLeftChild(mid);
+
+                this.leftHeight = mid.GetHeight();
+                finalNewNode.rightHeight = this.GetHeight();
+            }
+
+            return finalNewNode;
+        }
+
+        /**
+         * Rotates subtree counter-clockwise and returns new subtree's root
+         * @return new Root
+         */
+        public AVLNode RotateCCW()
+        {
+            AVLNode finalNewNode = GetRightChild();
+            if(finalNewNode == null)
+            {
+                return this;
+            }
+            else
+            {
+                var mid = finalNewNode.GetLeftChild();
+                finalNewNode.SetLeftChild(this);
+                this.SetRightChild(mid);
+
+                this.rightHeight = mid.GetHeight();
+                finalNewNode.leftHeight = this.GetHeight();
+            }
+
+            return finalNewNode;
+        }
+
+        /**
+         * returns subtree's height counted from this
+         * @return
+         */
+        public int GetHeight()
+        {
+            return (GetLeftHeight() > GetRightHeight() ? GetLeftHeight() : GetRightHeight()) + 1;
         }
     }
 
