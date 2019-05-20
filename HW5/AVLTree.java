@@ -98,7 +98,7 @@ public class AVLTree<T extends Comparable<T>>
         /**
          * Inserts new item recursively
          * @param newItem : New item to be inserted
-         * @return : Insertion status (used to determine height change)
+         * @return : false when element already exists
          */
         public boolean InsertRecursive(T newItem)
         {
@@ -174,20 +174,20 @@ public class AVLTree<T extends Comparable<T>>
                     SetRightChild(toBeChecked.RotateCCW());
                     rightHeight = GetRightChild().GetHeight();
                 }
-
             }
             else
             {
-                content = newItem;
+                return false;
             }
 
             return insertResult;
         }
 
         /**
-         * Deletes given item recursively
+         * Deletes given item recursively.
+         * Does nothing when key doesn't exists
+         * 
          * @param searchKey : item content to delete
-         * @return : deletion status (used to determine height change)
          */
         public void DeleteRecursive(T searchKey)
         {
@@ -326,6 +326,44 @@ public class AVLTree<T extends Comparable<T>>
         }
 
         /**
+         * Searches given key from subtree.
+         * returns null when key doesn't exists
+         * @param searchKey : Key used in searching
+         * @return : Containing element equals with searchKey
+         */
+        public T SearchRecursive(T searchKey)
+        {
+            int compareResult = GetContent().compareTo(searchKey);
+
+            if (compareResult == 0)
+            {
+                return GetContent();
+            }
+            else if (compareResult > 0)
+            {
+                if (GetLeftChild() != null)
+                {
+                    return GetLeftChild().SearchRecursive(searchKey);
+                }
+                else 
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                if (GetRightChild() != null)
+                {
+                    return GetRightChild().SearchRecursive(searchKey);
+                }
+                else 
+                {
+                    return null;
+                }
+            }
+        }
+
+        /**
          * Rotates subtree clockwise and returns new subtree's root
          * @return new Root
          */
@@ -442,18 +480,113 @@ public class AVLTree<T extends Comparable<T>>
         }
     }
 
-    private AVLNode dummyRootNode;
+    private AVLNode root;
+    private int count;
 
     /**
      * Initializes new AVLTree
      */
     public AVLTree()
     {
+        count = 0;
+        root = null;
+    }
 
+    public int GetCount()
+    {
+        return count;
     }
 
     public void Insert(T newItem)
     {
-        
+        if(count == 0)
+        {
+            root = new AVLNode(newItem);
+            count += 1;
+        }
+        else
+        {
+            boolean result = root.InsertRecursive(newItem);
+
+            var toBeChecked = root;
+            int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
+            if (balanceFactor > 1)
+            {
+                if (toBeChecked.GetLeftChild().GetLeftHeight() - toBeChecked.GetLeftChild().GetRightHeight() < 0)
+                {
+                    toBeChecked.SetLeftChild(toBeChecked.GetLeftChild().RotateCCW());
+                }
+                root = toBeChecked.RotateCW();
+            }
+            else if (balanceFactor < -1)
+            {
+                if (toBeChecked.GetRightChild().GetRightHeight() - toBeChecked.GetRightChild().GetLeftHeight() < 0)
+                {
+                    toBeChecked.SetRightChild(toBeChecked.GetRightChild().RotateCW());
+                }
+                root = toBeChecked.RotateCCW();
+            }
+
+            if (result == true)
+            {
+                count += 1;
+            }
+        }
+    }
+
+    public T Search(T searchKey)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+        else
+        {
+            return root.SearchRecursive(searchKey);
+        }
+    }
+
+    public void Delete(T searchKey)
+    {
+        if (root != null)
+        {
+            if (root.GetContent().equals(searchKey))
+            {
+                AVLNode toDeleteNode = root;
+                AVLNode replaceNode = toDeleteNode.GetClosestNode();
+                if(replaceNode != null)
+                {
+                    toDeleteNode.DeleteRecursive(replaceNode.GetContent());
+                    toDeleteNode.SetContent(replaceNode.GetContent());
+
+                    var toBeChecked = root;
+                    int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
+                    if (balanceFactor > 1)
+                    {
+                        if (toBeChecked.GetLeftChild().GetLeftHeight() - toBeChecked.GetLeftChild().GetRightHeight() < 0)
+                        {
+                            toBeChecked.SetLeftChild(toBeChecked.GetLeftChild().RotateCCW());
+                        }
+                        root = toBeChecked.RotateCW();
+                    }
+                    else if (balanceFactor < -1)
+                    {
+                        if (toBeChecked.GetRightChild().GetRightHeight() - toBeChecked.GetRightChild().GetLeftHeight() < 0)
+                        {
+                            toBeChecked.SetRightChild(toBeChecked.GetRightChild().RotateCW());
+                        }
+                        root = toBeChecked.RotateCCW();
+                    }
+                }
+                else
+                {
+                    root = null;
+                }
+            }
+            else
+            {
+                root.DeleteRecursive(searchKey);
+            }
+        }
     }
 }

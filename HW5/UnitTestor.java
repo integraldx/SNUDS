@@ -25,6 +25,15 @@ public class UnitTestor
         {
             System.out.println("AVLNode test : FAILED");
         }
+
+        if (AVLTreeTest())
+        {
+            System.out.println("AVLTree test : PASSED");
+        }
+        else
+        {
+            System.out.println("AVLTree test : FAILED");
+        }
     }
 
     static boolean LinkedListTest()
@@ -89,7 +98,7 @@ public class UnitTestor
             for (int i = 0; i < 10000; i++)
             {
                 ll.Add(rand.nextInt() + "");
-                node.InsertRecursive(ll.At(ll.Count() - 1));
+                node.InsertRecursive(ll.At(i));
 
                 if (!node.GetRightChild().CheckCorrect())
                 {
@@ -102,6 +111,27 @@ public class UnitTestor
             for (int i = 0; i < 10000; i++)
             {
                 int rdNum = rand.nextInt(ll.Count());
+                var searchResult = node.SearchRecursive(ll.At(rdNum));
+
+                if ((ll.At(rdNum) != searchResult))
+                {
+                    System.err.println("Searching \"" + ll.At(rdNum) + "\" failed");
+                    System.err.println("Result was \"" + searchResult + "\".");
+                    System.err.println(ll.At(rdNum).equals(searchResult));
+                    return false;
+                }
+            }
+
+            if (null != node.SearchRecursive("asdfasdf"))
+            {
+                return false;
+            }
+
+            System.out.println("Search passed");
+
+            for (int i = 0; i < 10000; i++)
+            {
+                int rdNum = rand.nextInt(ll.Count());
                 node.DeleteRecursive(ll.At(rdNum));
                 ll.DeleteAt(rdNum);
 
@@ -110,6 +140,64 @@ public class UnitTestor
                     node.Print(0);
                     return false;
                 }
+            }
+
+            System.out.println("Deletion passed");
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.toString());
+            e.printStackTrace(System.err);
+            return false;
+        }
+        
+        return true;
+    }
+
+    static boolean AVLTreeTest()
+    {
+        try
+        {
+            AVLTree<String> tree = new AVLTree<String>();
+
+            Random rand = new Random();
+
+            LinkedList<String> ll = new LinkedList<String>();
+
+            for (int i = 0; i < 10000; i++)
+            {
+                ll.Add(rand.nextInt() + "");
+                tree.Insert(ll.At(i));
+            }
+
+            System.out.println("Insertion passed");
+
+            for (int i = 0; i < 10000; i++)
+            {
+                int rdNum = rand.nextInt(ll.Count());
+                var searchResult = tree.Search(ll.At(rdNum));
+
+                if ((ll.At(rdNum) != searchResult))
+                {
+                    System.err.println("Searching \"" + ll.At(rdNum) + "\" failed");
+                    System.err.println("Result was \"" + searchResult + "\".");
+                    System.err.println(ll.At(rdNum).equals(searchResult));
+                    return false;
+                }
+            }
+
+            if (null != tree.Search("asdfasdf"))
+            {
+                return false;
+            }
+
+            System.out.println("Search passed");
+
+            for (int i = 0; i < 10000; i++)
+            {
+                int rdNum = rand.nextInt(ll.Count());
+                tree.Delete(ll.At(rdNum));
+                ll.DeleteAt(rdNum);
             }
 
             System.out.println("Deletion passed");
