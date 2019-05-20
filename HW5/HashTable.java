@@ -33,6 +33,11 @@ public class HashTable<Key, Value>
         return internalList.At(GetHash(key));
     }
 
+    public Value SearchByHash(int i)
+    {
+        return internalList.At(i);
+    }
+
     public void Delete(Key key)
     {
         internalList.SetElementAt(GetHash(key), null);
