@@ -31,6 +31,11 @@ public class Node<T>
         return content;
     }
 
+    public void SetContent(T newContent)
+    {
+        content = newContent;
+    }
+
     public void SetLeftChild(Node<T> newLeft)
     {
         leftNode = newLeft;

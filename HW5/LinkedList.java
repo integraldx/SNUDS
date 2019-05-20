@@ -125,6 +125,22 @@ public class LinkedList<T> implements Iterable<T>
         return current.GetContent();
     }
 
+    public void SetElementAt(int index, T newElement)
+    {
+        if(index >= count || index < 0)
+        {
+            throw new IndexOutOfBoundsException();
+        }
+
+        Node<T> current = dummyStart;
+        for(int i = 0; i <= index; i++)
+        {
+            current = current.GetRightChild();
+        }
+
+        current.SetContent(newElement);
+    }
+
     /**
      * Gets total count of the list.
      * @return : count of containing items.

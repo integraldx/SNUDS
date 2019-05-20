@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.function.*;
 
 /**
  * <h1>UnitTestor</h1>
@@ -33,6 +34,15 @@ public class UnitTestor
         else
         {
             System.out.println("AVLTree test : FAILED");
+        }
+
+        if (HashTableTest())
+        {
+            System.out.println("HashTable test : PASSED");
+        }
+        else
+        {
+            System.out.println("HashTable test : FAILED");
         }
     }
 
@@ -209,6 +219,34 @@ public class UnitTestor
             return false;
         }
         
+        return true;
+    }
+
+    static Function<Integer, Integer> f = new Function<Integer, Integer>(){
+        public Integer apply(Integer i)
+        {
+            return i;
+        }
+    };
+
+    static boolean HashTableTest()
+    {
+        try
+        {
+            HashTable<Integer, String> ht = new HashTable<Integer, String>(f);
+
+            var testStr = "ABCDEFG";
+            ht.Add(2, testStr);
+            if(ht.Search(102) != testStr)
+            {
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.toString());
+            return false;
+        }
         return true;
     }
 }

@@ -38,7 +38,7 @@ public class AVLTree<T extends Comparable<T>>
          * Sets new content. Used in deletion.
          * @param newContent 
          */
-        private void SetContent(T newContent)
+        public void SetContent(T newContent)
         {
             content = newContent;
         }
