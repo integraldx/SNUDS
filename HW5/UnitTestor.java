@@ -272,6 +272,11 @@ public class UnitTestor
             {
                 System.err.println(i.x + ", " + i.y);
             }
+
+            for (var i : sm.SearchByHash(0))
+            {
+                System.err.println(i);
+            }
         }
         catch (Exception e)
         {

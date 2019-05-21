@@ -1,3 +1,4 @@
+import java.util.*;
 /**
  * <h1>AVLTree</h1>
  * This is AVL tree class made for DS Homework "Matching".
@@ -421,6 +422,21 @@ public class AVLTree<T extends Comparable<T>>
             return (GetLeftHeight() > GetRightHeight() ? GetLeftHeight() : GetRightHeight()) + 1;
         }
 
+        public void traversalRecursive(ArrayList<T> output)
+        {
+            output.add(GetContent());
+
+            if(GetLeftChild() != null)
+            {
+                GetLeftChild().traversalRecursive(output);
+            }
+
+            if(GetRightChild() != null)
+            {
+                GetRightChild().traversalRecursive(output);
+            }
+        }
+
         public void Print(int level)
         {
             // FIXME this is for debug
@@ -588,5 +604,14 @@ public class AVLTree<T extends Comparable<T>>
                 root.DeleteRecursive(searchKey);
             }
         }
+    }
+
+    public ArrayList<T> preorderTraversal()
+    {
+        ArrayList<T> result = new ArrayList<T>();
+
+        root.traversalRecursive(result);
+
+        return result;
     }
 }

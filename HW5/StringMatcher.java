@@ -1,4 +1,7 @@
 import java.util.function.Function;
+
+import com.sun.net.httpserver.Authenticator.Result;
+
 import java.util.*;
 /**
  * <h1>StringMatcher</h1>
@@ -133,8 +136,16 @@ public class StringMatcher
         return result;
     }
 
-    // public ArrayList<String> SearchByHash(int hashValue)
-    // {
+    public ArrayList<String> SearchByHash(int hashValue)
+    {
+        ArrayList<String> result = new ArrayList();
+        var trav = table.SearchByHash(hashValue).preorderTraversal();
 
-    // }
+        for (var i : trav)
+        {
+            result.add(i.str);
+        }
+
+        return result;
+    }
 }
