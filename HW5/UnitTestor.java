@@ -264,16 +264,22 @@ public class UnitTestor
         try
         {
             StringMatcher sm = new StringMatcher();
-            sm.SetOriginString("helloooooo\nworldddddd");
+            sm.SetOriginString(
+                "this is a boy. hello, boy.\n" + 
+                "it is more important to avoid using a bad data structure.\n" +
+                "i am a boyboy. boys be ambitious!\n" + 
+                "boyboyoboyboyboy\n" + 
+                "more important to avoid it is more important to data"
+                );
 
-            var v = sm.SearchPattern("dddddd");
+            var v = sm.SearchPattern("important to");
 
             for (var i : v)
             {
                 System.err.println(i.x + ", " + i.y);
             }
 
-            for (var i : sm.SearchByHash(0))
+            for (var i : sm.SearchByHash(1))
             {
                 System.err.println(i);
             }
@@ -281,7 +287,7 @@ public class UnitTestor
         catch (Exception e)
         {
             System.err.println(e.toString());
-            System.err.println(e.getStackTrace()[0]);
+            System.err.println(e.getStackTrace());
             return false;
         }
         return true;

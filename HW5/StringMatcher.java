@@ -1,7 +1,4 @@
 import java.util.function.Function;
-
-import com.sun.net.httpserver.Authenticator.Result;
-
 import java.util.*;
 /**
  * <h1>StringMatcher</h1>
@@ -19,6 +16,11 @@ class Tuple<X, Y>
     {
         this.x = x;
         this.y = y;
+    }
+
+    public boolean equals(Tuple<X, Y> t)
+    {
+        return x.equals(t.x) && y.equals(t.y);
     }
 }
 
@@ -75,6 +77,7 @@ public class StringMatcher
 
     public void SetOriginString(String newOrigin)
     {
+        table = new HashTable<String, AVLTree<StringSegment>>(hashFunction);
         origin = newOrigin;
         SetSubstrings(newOrigin);
     }
@@ -107,12 +110,54 @@ public class StringMatcher
         }
     }
 
-    void ResetSearchTable()
+    public ArrayList<Tuple<Integer, Integer>> SearchPattern(String pattern)
     {
+        ArrayList<Tuple<Integer, Integer>> result = SearchFixedPattern(pattern.substring(0, 6));
+        for (int i = 6; i < pattern.length(); i += 6)
+        {
+            String substr;
+            ArrayList<Tuple<Integer, Integer>> interResult;
+            if (i > pattern.length() - 6)
+            {
+                substr = pattern.substring(pattern.length() - 6);
+                interResult = SearchFixedPattern(substr);
 
+                var newRes = new ArrayList<Tuple<Integer, Integer>>();
+                for (int j = 0; j < result.size(); j += 1)
+                {
+                    for (int k = 0; k < result.size(); k += 1)
+                    {
+                        if(result.get(j).y + pattern.length() - 6 == interResult.get(k).y && result.get(j).x == interResult.get(k).x)
+                        {
+                            newRes.add(result.get(j));
+                        }
+                    }
+                }
+                result = newRes;
+            }
+            else
+            {
+                substr = pattern.substring(i, i + 6);
+                interResult = SearchFixedPattern(substr);
+
+                var newRes = new ArrayList<Tuple<Integer, Integer>>();
+                for (int j = 0; j < result.size(); j += 1)
+                {
+                    for (int k = 0; k < result.size(); k += 1)
+                    {
+                        if(result.get(j).y + i == interResult.get(k).y && result.get(j).x == interResult.get(k).x)
+                        {
+                            newRes.add(result.get(j));
+                        }
+                    }
+                }
+                result = newRes;
+            }
+        }
+        return result;
     }
 
-    public ArrayList<Tuple<Integer, Integer>> SearchPattern(String pattern)
+    private ArrayList<Tuple<Integer, Integer>> SearchFixedPattern(String pattern)
     {
         ArrayList<Tuple<Integer, Integer>> result = new ArrayList<Tuple<Integer, Integer>>();
 
@@ -138,7 +183,7 @@ public class StringMatcher
 
     public ArrayList<String> SearchByHash(int hashValue)
     {
-        ArrayList<String> result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         var trav = table.SearchByHash(hashValue).preorderTraversal();
 
         for (var i : trav)
