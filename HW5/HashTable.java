@@ -1,4 +1,5 @@
 import java.util.function.Function;
+import java.util.*;
 
 /**
  * <h1>HashTable</h1> This is hash table class made for DS Homework "Matching".
@@ -11,36 +12,36 @@ import java.util.function.Function;
 public class HashTable<Key, Value>
 {
     Function<Key, Integer> hashFunction;
-    LinkedList<Value> internalList;
+    ArrayList<Value> internalList;
     public HashTable(Function<Key, Integer> initialHashFunction)
     {
         hashFunction = initialHashFunction;
-        internalList = new LinkedList<Value>();
+        internalList = new ArrayList<Value>();
 
         for(int i = 0; i < 100; i++)
         {
-            internalList.Add(null);
+            internalList.add(null);
         }
     }
 
     public void Add(Key key, Value v)
     {
-        internalList.SetElementAt(GetHash(key), v);
+        internalList.set(GetHash(key), v);
     }
 
     public Value Search(Key key)
     {
-        return internalList.At(GetHash(key));
+        return internalList.get(GetHash(key));
     }
 
     public Value SearchByHash(int i)
     {
-        return internalList.At(i);
+        return internalList.get(i);
     }
 
     public void Delete(Key key)
     {
-        internalList.SetElementAt(GetHash(key), null);
+        internalList.set(GetHash(key), null);
     }
 
     public int GetHash(Key key)

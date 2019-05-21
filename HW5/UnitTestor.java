@@ -44,6 +44,15 @@ public class UnitTestor
         {
             System.out.println("HashTable test : FAILED");
         }
+
+        if (StringMatcherTest())
+        {
+            System.out.println("StringMatcher test : PASSED");
+        }
+        else
+        {
+            System.out.println("StringMatcher test : FAILED");
+        }
     }
 
     static boolean LinkedListTest()
@@ -245,6 +254,29 @@ public class UnitTestor
         catch (Exception e)
         {
             System.err.println(e.toString());
+            return false;
+        }
+        return true;
+    }
+
+    static boolean StringMatcherTest()
+    {
+        try
+        {
+            StringMatcher sm = new StringMatcher();
+            sm.SetOriginString("helloooooo\nworldddddd");
+
+            var v = sm.SearchPattern("dddddd");
+
+            for (var i : v)
+            {
+                System.err.println(i.x + ", " + i.y);
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.toString());
+            System.err.println(e.getStackTrace()[0]);
             return false;
         }
         return true;
