@@ -113,6 +113,7 @@ public class StringMatcher
     public ArrayList<Tuple<Integer, Integer>> SearchPattern(String pattern)
     {
         ArrayList<Tuple<Integer, Integer>> result = SearchFixedPattern(pattern.substring(0, 6));
+
         for (int i = 6; i < pattern.length(); i += 6)
         {
             String substr;
@@ -127,7 +128,7 @@ public class StringMatcher
                 {
                     for (int k = 0; k < interResult.size(); k += 1)
                     {
-                        if(result.get(j).y + pattern.length() - 6 == interResult.get(k).y && result.get(j).x == interResult.get(k).x)
+                        if(result.get(j).y + pattern.length() - 6 == interResult.get(k).y && result.get(j).x.equals(interResult.get(k).x))
                         {
                             newRes.add(result.get(j));
                         }
@@ -141,11 +142,13 @@ public class StringMatcher
                 interResult = SearchFixedPattern(substr);
 
                 var newRes = new ArrayList<Tuple<Integer, Integer>>();
+
+
                 for (int j = 0; j < result.size(); j += 1)
                 {
                     for (int k = 0; k < interResult.size(); k += 1)
                     {
-                        if(result.get(j).y + i == interResult.get(k).y && result.get(j).x == interResult.get(k).x)
+                        if(result.get(j).y + i == interResult.get(k).y && result.get(j).x.equals(interResult.get(k).x))
                         {
                             newRes.add(result.get(j));
                         }
