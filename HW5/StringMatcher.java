@@ -125,7 +125,7 @@ public class StringMatcher
                 var newRes = new ArrayList<Tuple<Integer, Integer>>();
                 for (int j = 0; j < result.size(); j += 1)
                 {
-                    for (int k = 0; k < result.size(); k += 1)
+                    for (int k = 0; k < interResult.size(); k += 1)
                     {
                         if(result.get(j).y + pattern.length() - 6 == interResult.get(k).y && result.get(j).x == interResult.get(k).x)
                         {
@@ -143,7 +143,7 @@ public class StringMatcher
                 var newRes = new ArrayList<Tuple<Integer, Integer>>();
                 for (int j = 0; j < result.size(); j += 1)
                 {
-                    for (int k = 0; k < result.size(); k += 1)
+                    for (int k = 0; k < interResult.size(); k += 1)
                     {
                         if(result.get(j).y + i == interResult.get(k).y && result.get(j).x == interResult.get(k).x)
                         {

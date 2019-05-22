@@ -39,7 +39,6 @@ public class Matching
 						content += sc.nextLine() + "\n";
 					}
 					sc.close();
-					System.err.println(content);
 					sm.SetOriginString(content);
 				}
 				catch (FileNotFoundException e)
@@ -56,7 +55,11 @@ public class Matching
 				}
 				for (var i : patternResult)
 				{
-					System.out.print("(" + i.x + ", " + i.y + ") ");
+					System.out.print("(" + i.x + ", " + i.y + ")");
+					if (i != patternResult.get(patternResult.size() - 1))
+					{
+						System.out.print(" ");
+					}
 				}
 				System.out.println();
 				break;
@@ -72,7 +75,12 @@ public class Matching
 
 					for (var i : hashResult)
 					{
-						System.out.print(i + " ");
+						System.out.print(i);
+
+						if (i != hashResult.get(hashResult.size() - 1))
+						{
+							System.out.print(" ");
+						}
 					}
 
 					System.out.println();
