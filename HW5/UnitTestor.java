@@ -272,14 +272,14 @@ public class UnitTestor
                 "more important to avoid it is more important to data"
                 );
 
-            var v = sm.SearchPattern("important to");
+            var v = sm.SearchPattern("important t");
 
             for (var i : v)
             {
                 System.err.println(i.x + ", " + i.y);
             }
 
-            for (var i : sm.SearchByHash(1))
+            for (var i : sm.SearchByHash(73))
             {
                 System.err.println(i);
             }

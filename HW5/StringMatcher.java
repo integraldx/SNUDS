@@ -184,6 +184,10 @@ public class StringMatcher
     public ArrayList<String> SearchByHash(int hashValue)
     {
         ArrayList<String> result = new ArrayList<String>();
+        if (table.SearchByHash(hashValue) == null)
+        {
+            return result;
+        }
         var trav = table.SearchByHash(hashValue).preorderTraversal();
 
         for (var i : trav)

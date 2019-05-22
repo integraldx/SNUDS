@@ -1,7 +1,9 @@
 import java.io.*;
+import java.util.*;
 
 public class Matching
 {
+	static StringMatcher sm = new StringMatcher();
 	public static void main(String args[])
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -25,7 +27,62 @@ public class Matching
 
 	private static void command(String input)
 	{
-		// TODO : 아래 문장을 삭제하고 구현해라.
-		System.out.println("<< command 함수에서 " + input + " 명령을 처리할 예정입니다 >>");
+		String value = input.substring(2);
+		switch (input.toCharArray()[0])
+		{
+			case '<':
+				try {
+					Scanner sc = new Scanner(new File(value));
+					String content = "";
+					while(sc.hasNextLine())
+					{
+						content += sc.nextLine() + "\n";
+					}
+					sc.close();
+					System.err.println(content);
+					sm.SetOriginString(content);
+				}
+				catch (FileNotFoundException e)
+				{
+					System.err.println("File not found.");
+				}
+				break;
+			case '?':
+				var patternResult = sm.SearchPattern(value);
+
+				if (patternResult.size() == 0)
+				{
+					patternResult.add(new Tuple<Integer, Integer>(0, 0));
+				}
+				for (var i : patternResult)
+				{
+					System.out.print("(" + i.x + ", " + i.y + ") ");
+				}
+				System.out.println();
+				break;
+			case '@':
+				try
+				{
+					var hashResult = sm.SearchByHash(Integer.parseInt(value));
+
+					if (hashResult.size() == 0)
+					{
+						hashResult.add("EMPTY");
+					}
+
+					for (var i : hashResult)
+					{
+						System.out.print(i + " ");
+					}
+
+					System.out.println();
+				}
+				catch (NumberFormatException e)
+				{
+					System.err.println("Invalid format");
+				}
+
+				break;
+		}
 	}
 }
