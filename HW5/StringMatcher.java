@@ -148,13 +148,41 @@ public class StringMatcher
                 interResult = SearchFixedPattern(substr);
 
                 var newRes = new ArrayList<Tuple<Integer, Integer>>();
+                int indexPointer = 0;
                 for (int j = 0; j < result.size(); j += 1)
                 {
-                    for (int k = 0; k < interResult.size(); k += 1)
+                    while (true)
                     {
-                        if(result.get(j).y + pattern.length() - 6 == interResult.get(k).y && result.get(j).x.equals(interResult.get(k).x))
+                        if (indexPointer >= interResult.size())
                         {
-                            newRes.add(result.get(j));
+                            break;
+                        }
+
+                        if (interResult.get(indexPointer).x < result.get(j).x)
+                        {
+                            indexPointer++;
+                            continue;
+                        }
+                        else if (interResult.get(indexPointer).x.equals(result.get(j).x))
+                        {
+                            if (result.get(j).y + pattern.length() - 6 == interResult.get(indexPointer).y)
+                            {
+                                newRes.add(result.get(j));
+                                break;
+                            }
+                            else if (interResult.get(indexPointer).y < result.get(j).y + pattern.length() - 6)
+                            {
+                                indexPointer++;
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
                 }
@@ -166,15 +194,42 @@ public class StringMatcher
                 interResult = SearchFixedPattern(substr);
 
                 var newRes = new ArrayList<Tuple<Integer, Integer>>();
-
+                int indexPointer = 0;
 
                 for (int j = 0; j < result.size(); j += 1)
                 {
-                    for (int k = 0; k < interResult.size(); k += 1)
+                    while (true)
                     {
-                        if(result.get(j).y + i == interResult.get(k).y && result.get(j).x.equals(interResult.get(k).x))
+                        if (indexPointer >= interResult.size())
                         {
-                            newRes.add(result.get(j));
+                            break;
+                        }
+
+                        if (interResult.get(indexPointer).x < result.get(j).x)
+                        {
+                            indexPointer++;
+                            continue;
+                        }
+                        else if (interResult.get(indexPointer).x.equals(result.get(j).x))
+                        {
+                            if (result.get(j).y + i == interResult.get(indexPointer).y)
+                            {
+                                newRes.add(result.get(j));
+                                break;
+                            }
+                            else if (interResult.get(indexPointer).y < result.get(j).y + i)
+                            {
+                                indexPointer++;
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
                 }
