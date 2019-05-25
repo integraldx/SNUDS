@@ -234,7 +234,7 @@ public class UnitTestor
     static Function<Integer, Integer> f = new Function<Integer, Integer>(){
         public Integer apply(Integer i)
         {
-            return i;
+            return i % 100;
         }
     };
 
@@ -242,10 +242,10 @@ public class UnitTestor
     {
         try
         {
-            HashTable<Integer, String> ht = new HashTable<Integer, String>(f);
+            HashTable<Integer, String> ht = new HashTable<Integer, String>(f, 100);
 
             var testStr = "ABCDEFG";
-            ht.Add(2, testStr);
+            ht.Insert(2, testStr);
             if(ht.Search(102) != testStr)
             {
                 return false;

@@ -8,10 +8,16 @@ import java.util.*;
  * @since : 2019-05-20
  */
 
+/**
+ * Simple tuple class
+ * @param <X>
+ * @param <Y>
+ */
 class Tuple<X, Y>
 {
     public final X x;
     public final Y y;
+
     public Tuple(X x, Y y)
     {
         this.x = x;
@@ -27,6 +33,9 @@ class Tuple<X, Y>
 
 public class StringMatcher
 {
+    /**
+     * Comparable class used to insert in AVL Tree.
+     */
     class StringSegment implements Comparable<StringSegment>
     {
         public String str;
@@ -56,7 +65,6 @@ public class StringMatcher
 
     String origin;
     HashTable<String, AVLTree<StringSegment>> table;
-
     Function<String, Integer> hashFunction = new Function<String, Integer>()
     {
         public Integer apply(String s)
@@ -66,22 +74,33 @@ public class StringMatcher
             {
                 result += si;
             }
-            return result;
+            return result % 100;
         }
     };
 
+    /**
+     * Makes new StringMatcher.
+     */
     public StringMatcher()
     {
-        table = new HashTable<String, AVLTree<StringSegment>>(hashFunction);
+
     }
 
+    /**
+     * Set original string and convert into internal structure.
+     * @param newOrigin : new original string
+     */
     public void SetOriginString(String newOrigin)
     {
-        table = new HashTable<String, AVLTree<StringSegment>>(hashFunction);
+        table = new HashTable<String, AVLTree<StringSegment>>(hashFunction, 100);
         origin = newOrigin;
         SetSubstrings(newOrigin);
     }
 
+    /**
+     * Insert string segments into trees
+     * @param newOrigin
+     */
     void SetSubstrings(String newOrigin)
     {
         var list = newOrigin.split("\n");
@@ -95,7 +114,7 @@ public class StringMatcher
                 if (tree == null)
                 {
                     tree = new AVLTree<StringSegment>();
-                    table.Add(substr, tree);
+                    table.Insert(substr, tree);
                 }
 
                 var searchSegment = new StringSegment(substr, null);
@@ -110,6 +129,11 @@ public class StringMatcher
         }
     }
 
+    /**
+     * Search given pattern from string
+     * @param pattern 
+     * @return : Pattern positions
+     */
     public ArrayList<Tuple<Integer, Integer>> SearchPattern(String pattern)
     {
         ArrayList<Tuple<Integer, Integer>> result = SearchFixedPattern(pattern.substring(0, 6));
@@ -160,6 +184,12 @@ public class StringMatcher
         return result;
     }
 
+    /**
+     * Search pattern with length of 6.
+     * Any excess characters are discarded.
+     * @param pattern
+     * @return
+     */
     private ArrayList<Tuple<Integer, Integer>> SearchFixedPattern(String pattern)
     {
         ArrayList<Tuple<Integer, Integer>> result = new ArrayList<Tuple<Integer, Integer>>();
@@ -184,6 +214,11 @@ public class StringMatcher
         return result;
     }
 
+    /**
+     * Search strings match to given hash value.
+     * @param hashValue
+     * @return
+     */
     public ArrayList<String> SearchByHash(int hashValue)
     {
         ArrayList<String> result = new ArrayList<String>();

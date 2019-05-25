@@ -13,39 +13,69 @@ public class HashTable<Key, Value>
 {
     Function<Key, Integer> hashFunction;
     ArrayList<Value> internalList;
-    public HashTable(Function<Key, Integer> initialHashFunction)
+
+    /**
+     * Makes new hashtable.
+     * @param initialHashFunction : Hash function used to hash key into integer
+     */
+    public HashTable(Function<Key, Integer> initialHashFunction, int tableLength)
     {
         hashFunction = initialHashFunction;
         internalList = new ArrayList<Value>();
 
-        for(int i = 0; i < 100; i++)
+        for(int i = 0; i < tableLength; i++)
         {
             internalList.add(null);
         }
     }
 
-    public void Add(Key key, Value v)
+    /**
+     * Assign given value to given key.
+     * If already exists, it overwrites.
+     * @param key
+     * @param v
+     */
+    public void Insert(Key key, Value v)
     {
         internalList.set(GetHash(key), v);
     }
 
+    /**
+     * Get value associated with given key
+     * @param key
+     * @return : search result
+     */
     public Value Search(Key key)
     {
         return internalList.get(GetHash(key));
     }
 
+    /**
+     * Get value associated with given hash
+     * @param i : hash value
+     * @return : search result
+     */
     public Value SearchByHash(int i)
     {
         return internalList.get(i);
     }
 
+    /**
+     * Fills null at given key.
+     * @param key
+     */
     public void Delete(Key key)
     {
         internalList.set(GetHash(key), null);
     }
 
-    public int GetHash(Key key)
+    /**
+     * Get hash value from given key.
+     * @param key
+     * @return
+     */
+    private int GetHash(Key key)
     {
-        return (hashFunction.apply(key) % 100);
+        return hashFunction.apply(key);
     }
 }

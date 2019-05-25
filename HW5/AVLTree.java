@@ -46,6 +46,7 @@ public class AVLTree<T extends Comparable<T>>
 
         /**
          * Gets left child node
+         * @return : left child node
          */
         public AVLNode GetLeftChild()
         {
@@ -54,6 +55,7 @@ public class AVLTree<T extends Comparable<T>>
 
         /**
          * Gets right child node
+         * @return : right child node
          */
         public AVLNode GetRightChild()
         {
@@ -80,7 +82,7 @@ public class AVLTree<T extends Comparable<T>>
 
         /**
          * Gets left height value
-         * @return left height
+         * @return : left height
          */
         public int GetLeftHeight()
         {
@@ -89,11 +91,20 @@ public class AVLTree<T extends Comparable<T>>
 
         /**
          * Gets right height value
-         * @return right height
+         * @return : right height
          */
         public int GetRightHeight()
         {
             return rightHeight;
+        }
+
+        /**
+         * returns subtree's height counted from this
+         * @return
+         */
+        public int GetHeight()
+        {
+            return (GetLeftHeight() > GetRightHeight() ? GetLeftHeight() : GetRightHeight()) + 1;
         }
 
         /**
@@ -414,14 +425,9 @@ public class AVLTree<T extends Comparable<T>>
         }
 
         /**
-         * returns subtree's height counted from this
-         * @return
+         * Do a prefix traversal and write on given arraylist
+         * @param output : ArrayList to write traversal result
          */
-        public int GetHeight()
-        {
-            return (GetLeftHeight() > GetRightHeight() ? GetLeftHeight() : GetRightHeight()) + 1;
-        }
-
         public void traversalRecursive(ArrayList<T> output)
         {
             output.add(GetContent());
@@ -437,9 +443,13 @@ public class AVLTree<T extends Comparable<T>>
             }
         }
 
+        /**
+         * Print tree on stderr.
+         * Used in debugging.
+         * @param level : recursion level
+         */
         public void Print(int level)
         {
-            // FIXME this is for debug
             if (level == 0)
             {
                 System.err.println("-----------------------------------------");
@@ -462,9 +472,13 @@ public class AVLTree<T extends Comparable<T>>
             }
         }
 
+        /**
+         * Check current tree is correct AVL tree
+         * Used in debugging.
+         * @return : false when tree is broken.
+         */
         public boolean CheckCorrect()
         {
-            // FIXME this is for debug
             if(Math.abs(GetLeftHeight() - GetRightHeight()) > 1)
             {
                 return false;
@@ -508,11 +522,19 @@ public class AVLTree<T extends Comparable<T>>
         root = null;
     }
 
+    /**
+     * Gets count of current tree
+     * @return
+     */
     public int GetCount()
     {
         return count;
     }
 
+    /**
+     * Inserts new element to tree
+     * @param newItem : Element to be inserted
+     */
     public void Insert(T newItem)
     {
         if(count == 0)
@@ -524,6 +546,7 @@ public class AVLTree<T extends Comparable<T>>
         {
             boolean result = root.InsertRecursive(newItem);
 
+            // Balance check and rotation
             var toBeChecked = root;
             int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
             if (balanceFactor > 1)
@@ -550,6 +573,11 @@ public class AVLTree<T extends Comparable<T>>
         }
     }
 
+    /**
+     * Search element from given element.
+     * @param searchKey : Element used in searching
+     * @return : Element equivalent with given element
+     */
     public T Search(T searchKey)
     {
         if (root == null)
@@ -562,6 +590,10 @@ public class AVLTree<T extends Comparable<T>>
         }
     }
 
+    /**
+     * Deletes given element from tree.
+     * @param searchKey : Element to be deleten
+     */
     public void Delete(T searchKey)
     {
         if (root != null)
@@ -575,6 +607,7 @@ public class AVLTree<T extends Comparable<T>>
                     toDeleteNode.DeleteRecursive(replaceNode.GetContent());
                     toDeleteNode.SetContent(replaceNode.GetContent());
 
+                    // Balance check and rotation
                     var toBeChecked = root;
                     int balanceFactor = toBeChecked.GetLeftHeight() - toBeChecked.GetRightHeight();
                     if (balanceFactor > 1)
@@ -606,6 +639,10 @@ public class AVLTree<T extends Comparable<T>>
         }
     }
 
+    /**
+     * Do preorder traversal on entire tree.
+     * @return : Traversal result
+     */
     public ArrayList<T> preorderTraversal()
     {
         ArrayList<T> result = new ArrayList<T>();

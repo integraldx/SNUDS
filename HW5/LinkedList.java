@@ -86,6 +86,12 @@ public class LinkedList<T> implements Iterable<T>
         count -= 1;
     }
 
+    /**
+     * Gets node at given index.
+     * Used internally. Not exposed.
+     * @param index : element index
+     * @return : Node<T> at given index
+     */
     private Node<T> NodeAt(int index)
     {
         if(index >= count || index < 0)
@@ -125,6 +131,11 @@ public class LinkedList<T> implements Iterable<T>
         return current.GetContent();
     }
 
+    /**
+     * Replace element at given index with given element.
+     * @param index : target index
+     * @param newElement : new element to replace with
+     */
     public void SetElementAt(int index, T newElement)
     {
         if(index >= count || index < 0)
@@ -150,6 +161,10 @@ public class LinkedList<T> implements Iterable<T>
         return count;
     }
 
+    /**
+     * Makes iterator from start
+     * @return : new Iterator
+     */
     public Iterator<T> iterator()
     {
         return new MyIterator(this);
