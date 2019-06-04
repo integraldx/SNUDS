@@ -119,9 +119,60 @@ class TrainMap
             }
         }
 
-        // System.err.println(costMap.get(from));
-        // System.err.println(to);
+        var path = EvaluatePath(from, to, costMap, "STARTER");
+        for (var i : path)
+        {
+            ll.push(i);
+        }
 
         return costMap.get(to);
+    }
+
+    LinkedList<String> EvaluatePath(String from, String to, HashMap<String, Integer> costMap, String line)
+    {
+        LinkedList<String> ll = null;
+        if (to.equals(from))
+        {
+            ll = new LinkedList<String>();
+            ll.push(from);
+            return ll;
+        }
+
+        var cost = costMap.get(to);
+        String nextLine = null;
+
+        for (var l : mapByEnd.get(to))
+        {
+            if (costMap.containsKey(l.GetFrom()))
+            {
+                if (cost.intValue() == costMap.get(l.GetFrom()) + l.GetTime())
+                {
+                    ll = EvaluatePath(from, l.GetFrom(), costMap, l.GetLine());
+                }
+                else if (cost.intValue() == costMap.get(l.GetFrom()) + l.GetTime() + 5)
+                {
+                    ll = EvaluatePath(from, l.GetFrom(), costMap, l.GetLine());
+                }
+            }
+
+            if (ll != null)
+            {
+                nextLine = l.GetLine();
+                break;
+            }
+        }
+
+        if (ll != null)
+        {
+            if (!line.equals("STARTER") && !line.equals(nextLine))
+            {
+                ll.push("*" + to);
+            }
+            else
+            {
+                ll.push(to);
+            }
+        }
+        return ll;
     }
 }

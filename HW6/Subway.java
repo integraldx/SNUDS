@@ -106,19 +106,19 @@ class Subway
             LinkedList<String> ll = new LinkedList<String>();
             int timeCost = map.FindPath(from, to, ll);
             StringBuilder sb = new StringBuilder();
-            // for (String i : ll)
-            // {
-            //     if (i.startsWith("*"))
-            //     {
-            //         sb.append("[" + stationInfo.get(i) + "] ");
-            //     }
-            //     else
-            //     {
-            //         sb.append(stationInfo.get(i) + " ");
-            //     }
-            // }
-            // sb.deleteCharAt(sb.length() - 1);
-            sb.append("" + timeCost + "\n");
+            for (String i : ll)
+            {
+                if (i.startsWith("*"))
+                {
+                    sb.append("[" + i.substring(1) + "] ");
+                }
+                else
+                {
+                    sb.append(i + " ");
+                }
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append("\n" + timeCost + "\n");
 
             System.out.print(sb.toString());
         }
