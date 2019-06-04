@@ -80,7 +80,14 @@ class Subway
 
         while (true)
         {
-            stringLine = s.nextLine();
+            if (s.hasNextLine())
+            {
+                stringLine = s.nextLine();
+            }
+            else
+            {
+                break;
+            }
             var l = stringLine.split(" ");
             if (l.length != 3)
             {
@@ -114,6 +121,11 @@ class Subway
     private static void HandleUserInput(Scanner s, TrainMap map, HashMap<String, Station> stationInfo)
     {
         String line;
+        HashMap<String, String> reverseMap = new HashMap<String, String>();
+        for (var i : stationInfo.entrySet())
+        {
+            reverseMap.put(i.getValue().GetStationName(), i.getKey());
+        }
         while (true)
         {
             line = s.nextLine();
@@ -121,25 +133,25 @@ class Subway
             {
                 break;
             }
-            var from = line.split(" ")[0]; 
-            var to = line.split(" ")[1];
+            var from = reverseMap.get(line.split(" ")[0]);
+            var to = reverseMap.get(line.split(" ")[1]);
 
             LinkedList<String> ll = new LinkedList<String>();
             int timeCost = map.FindPath(from, to, ll);
             StringBuilder sb = new StringBuilder();
-            for (String i : ll)
-            {
-                if (i.startsWith("*"))
-                {
-                    sb.append("[" + stationInfo.get(i) + "] ");
-                }
-                else
-                {
-                    sb.append(stationInfo.get(i) + " ");
-                }
-            }
-            sb.deleteCharAt(sb.length() - 1);
-            sb.append('\n' + timeCost + "\n");
+            // for (String i : ll)
+            // {
+            //     if (i.startsWith("*"))
+            //     {
+            //         sb.append("[" + stationInfo.get(i) + "] ");
+            //     }
+            //     else
+            //     {
+            //         sb.append(stationInfo.get(i) + " ");
+            //     }
+            // }
+            // sb.deleteCharAt(sb.length() - 1);
+            sb.append("" + timeCost + "\n");
 
             System.out.print(sb.toString());
         }
