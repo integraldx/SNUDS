@@ -1,7 +1,7 @@
 Subway: *.java
 	javac -encoding utf8 *.java
 
-run: *.class
+run: Subway
 	java Subway
 
 clean: 
