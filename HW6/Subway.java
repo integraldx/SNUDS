@@ -43,7 +43,7 @@ class Subway
 
         // Get user input
         s = new Scanner(System.in);
-        HandleUserInput(s, map, stationMap);
+        HandleUserInput(s, map);
         return;
     }
 
@@ -52,7 +52,7 @@ class Subway
         String stringLine;
         HashMap<String, Station> map = new HashMap<String, Station>();
 
-        while (true)
+        while (s.hasNextLine())
         {
             stringLine = s.nextLine();
             var l = stringLine.split(" ");
@@ -61,13 +61,7 @@ class Subway
                 break;
             }
             Station t;
-            if (null == (t = map.get(l[0])))
-            {
-                map.putIfAbsent(l[0], new Station(l[1]));
-            }
-            t = map.get(l[0]);
-
-            t.AddLine(l[2]);
+            map.put(l[0], new Station(l[1], l[2]));
         }
 
         return map;
@@ -78,16 +72,9 @@ class Subway
         String stringLine;
         LinkedList<Link> list = new LinkedList<Link>();
 
-        while (true)
+        while (s.hasNextLine())
         {
-            if (s.hasNextLine())
-            {
-                stringLine = s.nextLine();
-            }
-            else
-            {
-                break;
-            }
+            stringLine = s.nextLine();
             var l = stringLine.split(" ");
             if (l.length != 3)
             {
@@ -96,36 +83,16 @@ class Subway
 
             Station from = stationInfo.get(l[0]);
             Station to = stationInfo.get(l[1]);
-            String line = null;
-            for(var i : from.GetLineList())
-            {
-                if (to.IsOnLine(i))
-                {
-                    line = i;
-                    break;
-                }
-            }
-            if (line != null)
-            {
-                list.add(new Link(l[0], l[1], line, Integer.parseInt(l[2])));
-            }
-            else
-            {
-                throw new InvalidParameterException();
-            }
+            String line = from.GetLine();
+            list.add(new Link(from.GetStationName(), to.GetStationName(), line, Integer.parseInt(l[2])));
         }
 
         return list;
     }
 
-    private static void HandleUserInput(Scanner s, TrainMap map, HashMap<String, Station> stationInfo)
+    private static void HandleUserInput(Scanner s, TrainMap map)
     {
         String line;
-        HashMap<String, String> reverseMap = new HashMap<String, String>();
-        for (var i : stationInfo.entrySet())
-        {
-            reverseMap.put(i.getValue().GetStationName(), i.getKey());
-        }
         while (true)
         {
             line = s.nextLine();
@@ -133,8 +100,8 @@ class Subway
             {
                 break;
             }
-            var from = reverseMap.get(line.split(" ")[0]);
-            var to = reverseMap.get(line.split(" ")[1]);
+            var from = line.split(" ")[0];
+            var to = line.split(" ")[1];
 
             LinkedList<String> ll = new LinkedList<String>();
             int timeCost = map.FindPath(from, to, ll);

@@ -1,14 +1,13 @@
-import java.util.HashSet;
 
 class Station
 {
     private final String stationName;
-    private HashSet<String> lineNumbers;
+    private String line;
 
-    public Station(final String stationName)
+    public Station(final String stationName, final String line)
     {
         this.stationName = new String(stationName);
-        lineNumbers = new HashSet<String>();
+        this.line = new String(line);
     }
 
     public String GetStationName()
@@ -16,18 +15,8 @@ class Station
         return stationName;
     }
 
-    public boolean IsOnLine(final String line)
+    public String GetLine()
     {
-        return lineNumbers.contains(line);
-    }
-
-    public void AddLine(final String line)
-    {
-        lineNumbers.add(line);
-    }
-
-    public HashSet<String> GetLineList()
-    {
-        return new HashSet<String>(lineNumbers);
+        return line;
     }
 }

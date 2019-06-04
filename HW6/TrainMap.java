@@ -10,11 +10,13 @@ class TrainMap
     class DijkPair
     {
         public final String s;
+        public final String line;
         public final int p;
 
-        public DijkPair(String s, int p)
+        public DijkPair(String s, String line, int p)
         {
             this.s = s;
+            this.line = line;
             this.p = p;
         }
     }
@@ -53,11 +55,12 @@ class TrainMap
             var start = mapByStart.get(l.GetFrom());
             if (start == null)
             {
-                mapByStart.put(l.GetFrom(), start = new LinkedList<Link>());
+                start = new LinkedList<Link>();
+                mapByStart.put(l.GetFrom(), start);
             }
             start.add(l);
 
-            var end = mapByEnd.get(l.GetFrom());
+            var end = mapByEnd.get(l.GetTo());
             if (end == null)
             {
                 mapByEnd.put(l.GetTo(), end = new LinkedList<Link>());
@@ -79,7 +82,7 @@ class TrainMap
         Set<String> visitedSet = new HashSet<String>();
         PriorityQueue<DijkPair> pQueue = new PriorityQueue<DijkPair>(10, new DijkComparator());
         costMap.put(from, 0);
-        pQueue.add(new DijkPair(from, 0));
+        pQueue.add(new DijkPair(from, "STARTER", 0));
         while (!pQueue.isEmpty())
         {
             var current = pQueue.poll();
@@ -97,10 +100,16 @@ class TrainMap
                         costMap.put(i.GetTo(), Integer.MAX_VALUE);
                     }
 
-                    if (costMap.get(i.GetTo()).intValue() > costMap.get(current.s) + i.GetTime())
+                    int penalty = 0;
+                    if ((!current.line.equals("STARTER")) && (!current.line.equals(i.GetLine())))
                     {
-                        costMap.put(i.GetTo(), costMap.get(current.s) + i.GetTime());
-                        pQueue.add(new DijkPair(i.GetTo(), costMap.get(i.GetTo())));
+                        penalty = 5;
+                    }
+
+                    if (costMap.get(i.GetTo()).intValue() > costMap.get(current.s) + i.GetTime() + penalty)
+                    {
+                        costMap.put(i.GetTo(), costMap.get(current.s) + i.GetTime() + penalty);
+                        pQueue.add(new DijkPair(i.GetTo(), i.GetLine(), costMap.get(i.GetTo())));
                     }
                 }
             }
@@ -111,7 +120,7 @@ class TrainMap
         }
 
         // System.err.println(costMap.get(from));
-        // System.err.println(costMap.get(to));
+        // System.err.println(to);
 
         return costMap.get(to);
     }
