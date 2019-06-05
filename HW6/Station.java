@@ -1,13 +1,14 @@
+import java.util.LinkedList;
 
 class Station
 {
     private final String stationName;
-    private String line;
+    private LinkedList<String> stationNumbers = new LinkedList<String>();
+    private LinkedList<String> lines = new LinkedList<String>();
 
-    public Station(final String stationName, final String line)
+    public Station(final String stationName)
     {
         this.stationName = new String(stationName);
-        this.line = new String(line);
     }
 
     public String GetStationName()
@@ -15,8 +16,14 @@ class Station
         return stationName;
     }
 
-    public String GetLine()
+    public void AddStationNumber(String stationNumber, String lineNo)
     {
-        return line;
+        stationNumbers.add(stationNumber);
+        lines.add(lineNo);
+    }
+
+    public LinkedList<String> GetStationNumberList()
+    {
+        return stationNumbers;
     }
 }

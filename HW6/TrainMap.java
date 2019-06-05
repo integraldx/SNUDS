@@ -10,13 +10,11 @@ class TrainMap
     class DijkPair
     {
         public final String s;
-        public final String line;
         public final int p;
 
-        public DijkPair(String s, String line, int p)
+        public DijkPair(String s, int p)
         {
             this.s = s;
-            this.line = line;
             this.p = p;
         }
     }
@@ -42,7 +40,6 @@ class TrainMap
 
     private HashMap<String, LinkedList<Link>> mapByStart = new HashMap<String, LinkedList<Link>>();
     private HashMap<String, LinkedList<Link>> mapByEnd = new HashMap<String, LinkedList<Link>>();
-    private HashMap<String, LinkedList<Link>> mapByLineNumber = new HashMap<String, LinkedList<Link>>();
 
     /**
      * Initializes new map
@@ -66,13 +63,6 @@ class TrainMap
                 mapByEnd.put(l.GetTo(), end = new LinkedList<Link>());
             }
             end.add(l);
-
-            var line = mapByLineNumber.get(l.GetLine());
-            if (line == null)
-            {
-                mapByLineNumber.put(l.GetLine(), line = new LinkedList<Link>());
-            }
-            line.add(l);
         }
     }
 
@@ -82,7 +72,7 @@ class TrainMap
         Set<String> visitedSet = new HashSet<String>();
         PriorityQueue<DijkPair> pQueue = new PriorityQueue<DijkPair>(10, new DijkComparator());
         costMap.put(from, 0);
-        pQueue.add(new DijkPair(from, "STARTER", 0));
+        pQueue.add(new DijkPair(from, 0));
         while (!pQueue.isEmpty())
         {
             var current = pQueue.poll();
@@ -100,16 +90,10 @@ class TrainMap
                         costMap.put(i.GetTo(), Integer.MAX_VALUE);
                     }
 
-                    int penalty = 0;
-                    if ((!current.line.equals("STARTER")) && (!current.line.equals(i.GetLine())))
+                    if (costMap.get(i.GetTo()).intValue() > costMap.get(current.s) + i.GetTime())
                     {
-                        penalty = 5;
-                    }
-
-                    if (costMap.get(i.GetTo()).intValue() > costMap.get(current.s) + i.GetTime() + penalty)
-                    {
-                        costMap.put(i.GetTo(), costMap.get(current.s) + i.GetTime() + penalty);
-                        pQueue.add(new DijkPair(i.GetTo(), i.GetLine(), costMap.get(i.GetTo())));
+                        costMap.put(i.GetTo(), costMap.get(current.s) + i.GetTime());
+                        pQueue.add(new DijkPair(i.GetTo(), costMap.get(i.GetTo())));
                     }
                 }
             }
@@ -119,7 +103,21 @@ class TrainMap
             }
         }
 
-        var path = EvaluatePath(from, to, costMap, "STARTER");
+        // while(true)
+        // {
+        //     Scanner s = new Scanner(System.in);
+        //     String lin = s.nextLine();
+        //     if (lin.equals("Q"))
+        //     {
+        //         break;
+        //     }
+        //     else
+        //     {
+        //         System.err.println(costMap.get(lin));
+        //     }
+        // }
+
+        var path = EvaluatePath(from, to, costMap);
         for (var i : path)
         {
             ll.push(i);
@@ -128,7 +126,7 @@ class TrainMap
         return costMap.get(to);
     }
 
-    LinkedList<String> EvaluatePath(String from, String to, HashMap<String, Integer> costMap, String line)
+    LinkedList<String> EvaluatePath(String from, String to, HashMap<String, Integer> costMap)
     {
         LinkedList<String> ll = null;
         if (to.equals(from))
@@ -139,7 +137,6 @@ class TrainMap
         }
 
         var cost = costMap.get(to);
-        String nextLine = null;
 
         for (var l : mapByEnd.get(to))
         {
@@ -147,32 +144,17 @@ class TrainMap
             {
                 if (cost.intValue() == costMap.get(l.GetFrom()) + l.GetTime())
                 {
-                    ll = EvaluatePath(from, l.GetFrom(), costMap, l.GetLine());
-                }
-                else if (cost.intValue() == costMap.get(l.GetFrom()) + l.GetTime() + 5)
-                {
-                    ll = EvaluatePath(from, l.GetFrom(), costMap, l.GetLine());
+                    ll = EvaluatePath(from, l.GetFrom(), costMap);
                 }
             }
 
             if (ll != null)
             {
-                nextLine = l.GetLine();
                 break;
             }
         }
 
-        if (ll != null)
-        {
-            if (!line.equals("STARTER") && !line.equals(nextLine))
-            {
-                ll.push("*" + to);
-            }
-            else
-            {
-                ll.push(to);
-            }
-        }
+        ll.push(to);
         return ll;
     }
 }

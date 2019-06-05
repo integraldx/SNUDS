@@ -36,14 +36,16 @@ class Subway
         var stationMap = GetStations(s);
         var links = GetEdges(s, stationMap);
 
-        s.close();
         // File input done
+        s.close();
 
         TrainMap map = new TrainMap(links);
 
+        var revMap = MakeStationReverseMap(stationMap);
+
         // Get user input
         s = new Scanner(System.in);
-        HandleUserInput(s, map);
+        HandleUserInput(s, map, stationMap, revMap);
         return;
     }
 
@@ -60,8 +62,14 @@ class Subway
             {
                 break;
             }
-            Station t;
-            map.put(l[0], new Station(l[1], l[2]));
+
+            if (!map.containsKey(l[1]))
+            {
+                map.put(l[1], new Station(l[1]));
+            }
+            Station t = map.get(l[1]);
+
+            t.AddStationNumber(l[0], l[2]);
         }
 
         return map;
@@ -81,16 +89,45 @@ class Subway
                 break;
             }
 
-            Station from = stationInfo.get(l[0]);
-            Station to = stationInfo.get(l[1]);
-            String line = from.GetLine();
-            list.add(new Link(from.GetStationName(), to.GetStationName(), line, Integer.parseInt(l[2])));
+            String from = l[0];
+            String to = l[1];
+            list.add(new Link(from, to, Integer.parseInt(l[2])));
+        }
+
+        for (var i : stationInfo.values())
+        {
+            if (i.GetStationNumberList().size() > 1)
+            {
+                var noList = i.GetStationNumberList();
+                for (int j = 0; j < noList.size() - 1; j++)
+                {
+                    for (int k = j + 1; k < noList.size(); k++)
+                    {
+                        list.add(new Link(noList.get(j), noList.get(k), 5));
+                        list.add(new Link(noList.get(k), noList.get(j), 5));
+                    }
+                }
+            }
         }
 
         return list;
     }
 
-    private static void HandleUserInput(Scanner s, TrainMap map)
+    private static HashMap<String, String> MakeStationReverseMap(HashMap<String, Station> m)
+    {
+        var result = new HashMap<String, String>();
+        for (var i : m.entrySet())
+        {
+            for (var j : i.getValue().GetStationNumberList())
+            {
+                result.put(j, i.getValue().GetStationName());
+            }
+        }
+
+        return result;
+    }
+
+    private static void HandleUserInput(Scanner s, TrainMap map, HashMap<String, Station> stationInfo, HashMap<String, String> translationInfo)
     {
         String line;
         while (true)
@@ -100,23 +137,53 @@ class Subway
             {
                 break;
             }
-            var from = line.split(" ")[0];
-            var to = line.split(" ")[1];
+            var from = stationInfo.get(line.split(" ")[0]);
+            var to = stationInfo.get(line.split(" ")[1]);
+
 
             LinkedList<String> ll = new LinkedList<String>();
-            int timeCost = map.FindPath(from, to, ll);
-            StringBuilder sb = new StringBuilder();
-            for (String i : ll)
+            int timeCost = Integer.MAX_VALUE;
+            for (int i = 0; i < from.GetStationNumberList().size(); i++)
             {
-                if (i.startsWith("*"))
+                for (int j = 0; j < to.GetStationNumberList().size(); j++)
                 {
-                    sb.append("[" + i.substring(1) + "] ");
-                }
-                else
-                {
-                    sb.append(i + " ");
+                    var tempLL = new LinkedList<String>();
+                    int temp = map.FindPath(from.GetStationNumberList().get(i), to.GetStationNumberList().get(j), tempLL);
+
+                    if (temp < timeCost)
+                    {
+                        timeCost = temp;
+                        ll = tempLL;
+                    }
                 }
             }
+            StringBuilder sb = new StringBuilder();
+            String prev = null;
+            boolean skip = false;
+            for (String i : ll)
+            {
+                boolean ts = skip;
+                if (prev != null)
+                {
+                    if (translationInfo.get(prev).equals(translationInfo.get(i)))
+                    {
+                        skip = true;
+                        ts = true;
+                        sb.append("[" + translationInfo.get(prev) + "] ");
+                    }
+                    else
+                    {
+                        skip = false;
+                    }
+
+                    if (!ts)
+                    {
+                        sb.append(translationInfo.get(prev) + " ");
+                    }
+                }
+                prev = i;
+            }
+            sb.append(translationInfo.get(prev) + " ");
             sb.deleteCharAt(sb.length() - 1);
             sb.append("\n" + timeCost + "\n");
 

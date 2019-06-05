@@ -9,14 +9,12 @@ class Link
 {
     private String startStation;
     private String endStation;
-    private String line;
     private int minute;
 
-    public Link(String startStation, String endStation, String line, int minute)
+    public Link(String startStation, String endStation, int minute)
     {
         this.startStation = startStation;
         this.endStation = endStation; 
-        this.line = line;
         this.minute = minute;
     }
 
@@ -28,11 +26,6 @@ class Link
     public String GetTo()
     {
         return endStation;
-    }
-
-    public String GetLine()
-    {
-        return line;
     }
 
     public int GetTime()
