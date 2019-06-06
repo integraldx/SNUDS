@@ -67,11 +67,12 @@ class TrainMap
         }
     }
 
-    public long FindPath(HashSet<String> from, String to, LinkedList<String> ll)
+    public long FindPath(HashSet<String> from, HashSet<String> to, LinkedList<String> ll)
     {
         HashMap<String, Long> costMap = new HashMap<String, Long>();
         Set<String> visitedSet = new HashSet<String>();
         PriorityQueue<DijkPair> pQueue = new PriorityQueue<DijkPair>(10, new DijkComparator());
+        String finalStation = null;
         costMap.put((String)from.toArray()[0], Long.parseLong("0"));
         pQueue.add(new DijkPair((String)from.toArray()[0], 0));
         while (!pQueue.isEmpty())
@@ -95,56 +96,57 @@ class TrainMap
                         costMap.put(i.GetTo(), Long.MAX_VALUE);
                     }
 
-                    if (i.isTransfer() && from.contains(i.GetTo()))
+                    if (from.contains(i.GetTo()) && from.contains(current.s))
                     {
                         costMap.put(i.GetTo(), costMap.get(current.s));
                         pQueue.add(new DijkPair(i.GetTo(), costMap.get(i.GetTo())));
                     }
-                    if (costMap.get(i.GetTo()).longValue() > costMap.get(current.s) + i.GetTime())
+                    else if (costMap.get(i.GetTo()).longValue() > costMap.get(current.s) + i.GetTime())
                     {
                         costMap.put(i.GetTo(), costMap.get(current.s) + i.GetTime());
                         pQueue.add(new DijkPair(i.GetTo(), costMap.get(i.GetTo())));
                     }
                 }
             }
-            if (current.s.equals(to))
+
+            if (to.contains(current.s))
             {
+                finalStation = current.s;
                 break;
             }
         }
 
-        var path = EvaluatePath(from, to, costMap);
+        HashSet<String> newVisitor = new HashSet<String>();
+        var path = EvaluatePath(from, finalStation, costMap, newVisitor);
         for (var i : path)
         {
             ll.push(i);
         }
 
-        return costMap.get(to);
+        return costMap.get(finalStation);
     }
 
-    LinkedList<String> EvaluatePath(HashSet<String> fromSet, String to, HashMap<String, Long> costMap)
+    LinkedList<String> EvaluatePath(HashSet<String> fromSet, String to, HashMap<String, Long> costMap, HashSet<String> visitedSet)
     {
+        visitedSet.add(to);
         LinkedList<String> ll = null;
 
-        for (var i : fromSet)
+        if (fromSet.contains(to))
         {
-            if (i.equals(to))
-            {
-                ll = new LinkedList<String>();
-                ll.push(to);
-                return ll;
-            }
+            ll = new LinkedList<String>();
+            ll.push(to);
+            return ll;
         }
 
         var cost = costMap.get(to);
 
         for (var l : mapByEnd.get(to))
         {
-            if (costMap.containsKey(l.GetFrom()))
+            if (costMap.containsKey(l.GetFrom()) && !visitedSet.contains(l.GetFrom()))
             {
                 if (cost.longValue() == costMap.get(l.GetFrom()) + l.GetTime())
                 {
-                    ll = EvaluatePath(fromSet, l.GetFrom(), costMap);
+                    ll = EvaluatePath(fromSet, l.GetFrom(), costMap, visitedSet);
                 }
             }
 

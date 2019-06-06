@@ -143,20 +143,9 @@ class Subway
             var from = stationInfo.get(line.split(" ")[0]);
             var to = stationInfo.get(line.split(" ")[1]);
 
+            var ll = new LinkedList<String>();
+            long timeCost = map.FindPath(from.GetStationNumberSet(), to.GetStationNumberSet(), ll);
 
-            LinkedList<String> ll = new LinkedList<String>();
-            long timeCost = Long.MAX_VALUE;
-            for (var j : to.GetStationNumberSet())
-            {
-                var tempLL = new LinkedList<String>();
-                long temp = map.FindPath(from.GetStationNumberSet(), j, tempLL);
-
-                if (temp < timeCost)
-                {
-                    timeCost = temp;
-                    ll = tempLL;
-                }
-            }
             StringBuilder sb = new StringBuilder();
             String prev = null;
             boolean skip = false;
