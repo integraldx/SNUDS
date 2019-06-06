@@ -49,13 +49,26 @@ class TrainMap
     {
         for (var l : linkArray)
         {
+            Link toErase = null;
             var start = mapByStart.get(l.GetFrom());
             if (start == null)
             {
                 start = new LinkedList<Link>();
                 mapByStart.put(l.GetFrom(), start);
             }
+            for (var k : start)
+            {
+                if (k.GetTo().equals(l.GetTo()) && k.GetTime() >= l.GetTime())
+                {
+                    toErase = k;
+                    break;
+                }
+            }
+            if (toErase != null)
+                start.remove(toErase);
             start.add(l);
+
+            toErase = null;
 
             var end = mapByEnd.get(l.GetTo());
             if (end == null)
@@ -63,6 +76,16 @@ class TrainMap
                 end = new LinkedList<Link>();
                 mapByEnd.put(l.GetTo(),end);
             }
+            for (var k : end)
+            {
+                if (k.GetFrom().equals(l.GetFrom()) && k.GetTime() > l.GetTime())
+                {
+                    toErase = k;
+                    break;
+                }
+            }
+            if (toErase != null)
+                end.remove(toErase);
             end.add(l);
         }
     }
