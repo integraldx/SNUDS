@@ -9,9 +9,9 @@ class Link
 {
     private String startStation;
     private String endStation;
-    private int minute;
+    private long minute;
 
-    public Link(String startStation, String endStation, int minute)
+    public Link(String startStation, String endStation, long minute)
     {
         this.startStation = startStation;
         this.endStation = endStation; 
@@ -28,7 +28,7 @@ class Link
         return endStation;
     }
 
-    public int GetTime()
+    public long GetTime()
     {
         return minute;
     }

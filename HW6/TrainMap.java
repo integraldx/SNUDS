@@ -10,9 +10,9 @@ class TrainMap
     class DijkPair
     {
         public final String s;
-        public final int p;
+        public final long p;
 
-        public DijkPair(String s, int p)
+        public DijkPair(String s, long p)
         {
             this.s = s;
             this.p = p;
@@ -60,18 +60,19 @@ class TrainMap
             var end = mapByEnd.get(l.GetTo());
             if (end == null)
             {
-                mapByEnd.put(l.GetTo(), end = new LinkedList<Link>());
+                end = new LinkedList<Link>();
+                mapByEnd.put(l.GetTo(),end);
             }
             end.add(l);
         }
     }
 
-    public int FindPath(String from, String to, LinkedList<String> ll)
+    public long FindPath(String from, String to, LinkedList<String> ll)
     {
-        HashMap<String, Integer> costMap = new HashMap<String, Integer>();
+        HashMap<String, Long> costMap = new HashMap<String, Long>();
         Set<String> visitedSet = new HashSet<String>();
         PriorityQueue<DijkPair> pQueue = new PriorityQueue<DijkPair>(10, new DijkComparator());
-        costMap.put(from, 0);
+        costMap.put(from, Long.parseLong("0"));
         pQueue.add(new DijkPair(from, 0));
         while (!pQueue.isEmpty())
         {
@@ -82,15 +83,19 @@ class TrainMap
             }
             else
             {
+                if (mapByStart.get(current.s) == null)
+                {
+                    continue;
+                }
                 visitedSet.add(current.s);
                 for (var i : mapByStart.get(current.s))
                 {
                     if (!costMap.containsKey(i.GetTo()))
                     {
-                        costMap.put(i.GetTo(), Integer.MAX_VALUE);
+                        costMap.put(i.GetTo(), Long.MAX_VALUE);
                     }
 
-                    if (costMap.get(i.GetTo()).intValue() > costMap.get(current.s) + i.GetTime())
+                    if (costMap.get(i.GetTo()).longValue() > costMap.get(current.s) + i.GetTime())
                     {
                         costMap.put(i.GetTo(), costMap.get(current.s) + i.GetTime());
                         pQueue.add(new DijkPair(i.GetTo(), costMap.get(i.GetTo())));
@@ -103,20 +108,6 @@ class TrainMap
             }
         }
 
-        // while(true)
-        // {
-        //     Scanner s = new Scanner(System.in);
-        //     String lin = s.nextLine();
-        //     if (lin.equals("Q"))
-        //     {
-        //         break;
-        //     }
-        //     else
-        //     {
-        //         System.err.println(costMap.get(lin));
-        //     }
-        // }
-
         var path = EvaluatePath(from, to, costMap);
         for (var i : path)
         {
@@ -126,7 +117,7 @@ class TrainMap
         return costMap.get(to);
     }
 
-    LinkedList<String> EvaluatePath(String from, String to, HashMap<String, Integer> costMap)
+    LinkedList<String> EvaluatePath(String from, String to, HashMap<String, Long> costMap)
     {
         LinkedList<String> ll = null;
         if (to.equals(from))
@@ -142,7 +133,7 @@ class TrainMap
         {
             if (costMap.containsKey(l.GetFrom()))
             {
-                if (cost.intValue() == costMap.get(l.GetFrom()) + l.GetTime())
+                if (cost.longValue() == costMap.get(l.GetFrom()) + l.GetTime())
                 {
                     ll = EvaluatePath(from, l.GetFrom(), costMap);
                 }
@@ -154,7 +145,10 @@ class TrainMap
             }
         }
 
-        ll.push(to);
+        if (ll != null)
+        {
+            ll.push(to);
+        }
         return ll;
     }
 }

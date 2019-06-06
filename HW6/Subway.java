@@ -142,13 +142,13 @@ class Subway
 
 
             LinkedList<String> ll = new LinkedList<String>();
-            int timeCost = Integer.MAX_VALUE;
+            long timeCost = Long.MAX_VALUE;
             for (int i = 0; i < from.GetStationNumberList().size(); i++)
             {
                 for (int j = 0; j < to.GetStationNumberList().size(); j++)
                 {
                     var tempLL = new LinkedList<String>();
-                    int temp = map.FindPath(from.GetStationNumberList().get(i), to.GetStationNumberList().get(j), tempLL);
+                    long temp = map.FindPath(from.GetStationNumberList().get(i), to.GetStationNumberList().get(j), tempLL);
 
                     if (temp < timeCost)
                     {
