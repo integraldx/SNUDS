@@ -67,13 +67,13 @@ class TrainMap
         }
     }
 
-    public long FindPath(String from, String to, LinkedList<String> ll)
+    public long FindPath(HashSet<String> from, String to, LinkedList<String> ll)
     {
         HashMap<String, Long> costMap = new HashMap<String, Long>();
         Set<String> visitedSet = new HashSet<String>();
         PriorityQueue<DijkPair> pQueue = new PriorityQueue<DijkPair>(10, new DijkComparator());
-        costMap.put(from, Long.parseLong("0"));
-        pQueue.add(new DijkPair(from, 0));
+        costMap.put((String)from.toArray()[0], Long.parseLong("0"));
+        pQueue.add(new DijkPair((String)from.toArray()[0], 0));
         while (!pQueue.isEmpty())
         {
             var current = pQueue.poll();
@@ -95,6 +95,11 @@ class TrainMap
                         costMap.put(i.GetTo(), Long.MAX_VALUE);
                     }
 
+                    if (i.isTransfer() && from.contains(i.GetTo()))
+                    {
+                        costMap.put(i.GetTo(), costMap.get(current.s));
+                        pQueue.add(new DijkPair(i.GetTo(), costMap.get(i.GetTo())));
+                    }
                     if (costMap.get(i.GetTo()).longValue() > costMap.get(current.s) + i.GetTime())
                     {
                         costMap.put(i.GetTo(), costMap.get(current.s) + i.GetTime());
@@ -117,14 +122,18 @@ class TrainMap
         return costMap.get(to);
     }
 
-    LinkedList<String> EvaluatePath(String from, String to, HashMap<String, Long> costMap)
+    LinkedList<String> EvaluatePath(HashSet<String> fromSet, String to, HashMap<String, Long> costMap)
     {
         LinkedList<String> ll = null;
-        if (to.equals(from))
+
+        for (var i : fromSet)
         {
-            ll = new LinkedList<String>();
-            ll.push(from);
-            return ll;
+            if (i.equals(to))
+            {
+                ll = new LinkedList<String>();
+                ll.push(to);
+                return ll;
+            }
         }
 
         var cost = costMap.get(to);
@@ -135,7 +144,7 @@ class TrainMap
             {
                 if (cost.longValue() == costMap.get(l.GetFrom()) + l.GetTime())
                 {
-                    ll = EvaluatePath(from, l.GetFrom(), costMap);
+                    ll = EvaluatePath(fromSet, l.GetFrom(), costMap);
                 }
             }
 

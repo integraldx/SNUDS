@@ -96,15 +96,18 @@ class Subway
 
         for (var i : stationInfo.values())
         {
-            if (i.GetStationNumberList().size() > 1)
+            if (i.GetStationNumberSet().size() > 1)
             {
-                var noList = i.GetStationNumberList();
-                for (int j = 0; j < noList.size() - 1; j++)
+                var noList = i.GetStationNumberSet();
+                for (var j : noList)
                 {
-                    for (int k = j + 1; k < noList.size(); k++)
+                    for (var k : noList)
                     {
-                        list.add(new Link(noList.get(j), noList.get(k), 5));
-                        list.add(new Link(noList.get(k), noList.get(j), 5));
+                        if (!j.equals(k))
+                        {
+                            list.add(new Link(j, k, 5, true));
+                            list.add(new Link(k, j, 5, true));
+                        }
                     }
                 }
             }
@@ -118,7 +121,7 @@ class Subway
         var result = new HashMap<String, String>();
         for (var i : m.entrySet())
         {
-            for (var j : i.getValue().GetStationNumberList())
+            for (var j : i.getValue().GetStationNumberSet())
             {
                 result.put(j, i.getValue().GetStationName());
             }
@@ -143,18 +146,15 @@ class Subway
 
             LinkedList<String> ll = new LinkedList<String>();
             long timeCost = Long.MAX_VALUE;
-            for (int i = 0; i < from.GetStationNumberList().size(); i++)
+            for (var j : to.GetStationNumberSet())
             {
-                for (int j = 0; j < to.GetStationNumberList().size(); j++)
-                {
-                    var tempLL = new LinkedList<String>();
-                    long temp = map.FindPath(from.GetStationNumberList().get(i), to.GetStationNumberList().get(j), tempLL);
+                var tempLL = new LinkedList<String>();
+                long temp = map.FindPath(from.GetStationNumberSet(), j, tempLL);
 
-                    if (temp < timeCost)
-                    {
-                        timeCost = temp;
-                        ll = tempLL;
-                    }
+                if (temp < timeCost)
+                {
+                    timeCost = temp;
+                    ll = tempLL;
                 }
             }
             StringBuilder sb = new StringBuilder();

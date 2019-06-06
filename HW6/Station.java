@@ -1,10 +1,10 @@
-import java.util.LinkedList;
+import java.util.HashSet;
 
 class Station
 {
     private final String stationName;
-    private LinkedList<String> stationNumbers = new LinkedList<String>();
-    private LinkedList<String> lines = new LinkedList<String>();
+    private HashSet<String> stationNumbers = new HashSet<String>();
+    private HashSet<String> lines = new HashSet<String>();
 
     public Station(final String stationName)
     {
@@ -22,7 +22,7 @@ class Station
         lines.add(lineNo);
     }
 
-    public LinkedList<String> GetStationNumberList()
+    public HashSet<String> GetStationNumberSet()
     {
         return stationNumbers;
     }

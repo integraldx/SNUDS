@@ -10,12 +10,21 @@ class Link
     private String startStation;
     private String endStation;
     private long minute;
+    private boolean isTransfer = false;
 
     public Link(String startStation, String endStation, long minute)
     {
         this.startStation = startStation;
         this.endStation = endStation; 
         this.minute = minute;
+    }
+
+    public Link(String startStation, String endStation, long minute, boolean isTransfer)
+    {
+        this.startStation = startStation;
+        this.endStation = endStation; 
+        this.minute = minute;
+        this.isTransfer = isTransfer;
     }
 
     public String GetFrom()
@@ -31,5 +40,10 @@ class Link
     public long GetTime()
     {
         return minute;
+    }
+
+    public boolean isTransfer()
+    {
+        return isTransfer;
     }
 }
